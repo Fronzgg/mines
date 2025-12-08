@@ -15,75 +15,139 @@ app.use(express.static(__dirname));
 // База данных SQLite
 const db = new sqlite3.Database('./frnmines.db', (err) => {
     if (err) {
-        console.error('Ошибка подключения к БД:', err);
+        console.error('❌ Ошибка подключения к БД:', err);
+        process.exit(1);
     } else {
         console.log('✅ База данных подключена');
-        initDatabase();
+        console.log('📂 Путь к БД:', path.resolve('./frnmines.db'));
+        
+        // Проверяем существование таблиц
+        checkTablesExist((exist) => {
+            if (exist) {
+                console.log('✅ Все таблицы уже существуют');
+            } else {
+                console.log('⚙️ Инициализация таблиц...');
+                initDatabase();
+            }
+        });
     }
 });
 
+// Проверка существования таблиц
+function checkTablesExist(callback) {
+    db.get("SELECT COUNT(*) as count FROM sqlite_master WHERE type='table' AND name IN ('users', 'promocodes', 'badges', 'game_history')", (err, result) => {
+        if (err) {
+            console.error('Ошибка проверки таблиц:', err);
+            callback(false);
+            return;
+        }
+        callback(result.count === 4);
+    });
+}
+
 // Инициализация таблиц
 function initDatabase() {
-    db.run(`CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY,
-        telegram_id INTEGER UNIQUE,
-        username TEXT,
-        first_name TEXT,
-        last_name TEXT,
-        photo_url TEXT,
-        balance INTEGER DEFAULT 10000,
-        verified INTEGER DEFAULT 0,
-        is_founder INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        last_active DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
+    // Создаем таблицы последовательно
+    db.serialize(() => {
+        // Таблица пользователей
+        db.run(`CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            telegram_id INTEGER UNIQUE,
+            username TEXT,
+            first_name TEXT,
+            last_name TEXT,
+            photo_url TEXT,
+            balance INTEGER DEFAULT 10000,
+            verified INTEGER DEFAULT 0,
+            is_founder INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            last_active DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`, (err) => {
+            if (err) {
+                console.error('Ошибка создания таблицы users:', err);
+            } else {
+                console.log('✅ Таблица users создана');
+                
+                // Добавляем основателя @fronzgg
+                db.run(`INSERT OR IGNORE INTO users (telegram_id, username, first_name, balance, verified, is_founder) 
+                        VALUES (?, ?, ?, ?, ?, ?)`, 
+                        [0, 'fronzgg', 'Founder', 50000, 1, 1], (err) => {
+                    if (err) {
+                        console.error('Ошибка добавления основателя:', err);
+                    } else {
+                        console.log('✅ Основатель @fronzgg добавлен');
+                    }
+                });
+            }
+        });
 
-    db.run(`CREATE TABLE IF NOT EXISTS promocodes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        code TEXT UNIQUE,
-        amount INTEGER,
-        used_by INTEGER,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (used_by) REFERENCES users(telegram_id)
-    )`);
+        // Таблица промокодов
+        db.run(`CREATE TABLE IF NOT EXISTS promocodes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            code TEXT UNIQUE,
+            amount INTEGER,
+            used_by INTEGER,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (used_by) REFERENCES users(telegram_id)
+        )`, (err) => {
+            if (err) {
+                console.error('Ошибка создания таблицы promocodes:', err);
+            } else {
+                console.log('✅ Таблица promocodes создана');
+                
+                // Добавляем стандартные промокоды
+                const defaultPromos = [
+                    ['WELCOME500', 500],
+                    ['MINES1000', 1000],
+                    ['BONUS2024', 1500],
+                    ['FRONZGG', 5000]
+                ];
 
-    db.run(`CREATE TABLE IF NOT EXISTS badges (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        badge_type TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(telegram_id)
-    )`);
+                defaultPromos.forEach(([code, amount]) => {
+                    db.run(`INSERT OR IGNORE INTO promocodes (code, amount) VALUES (?, ?)`, [code, amount], (err) => {
+                        if (err) {
+                            console.error(`Ошибка добавления промокода ${code}:`, err);
+                        }
+                    });
+                });
+                
+                console.log('✅ Промокоды добавлены');
+            }
+        });
 
-    db.run(`CREATE TABLE IF NOT EXISTS game_history (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        game_type TEXT,
-        bet_amount INTEGER,
-        win_amount INTEGER,
-        multiplier REAL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(telegram_id)
-    )`);
+        // Таблица бейджей
+        db.run(`CREATE TABLE IF NOT EXISTS badges (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            badge_type TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(telegram_id)
+        )`, (err) => {
+            if (err) {
+                console.error('Ошибка создания таблицы badges:', err);
+            } else {
+                console.log('✅ Таблица badges создана');
+            }
+        });
 
-    // Добавляем основателя @fronzgg
-    db.run(`INSERT OR IGNORE INTO users (telegram_id, username, first_name, balance, verified, is_founder) 
-            VALUES (?, ?, ?, ?, ?, ?)`, 
-            [0, 'fronzgg', 'Founder', 50000, 1, 1]);
-
-    // Добавляем стандартные промокоды
-    const defaultPromos = [
-        ['WELCOME500', 500],
-        ['MINES1000', 1000],
-        ['BONUS2024', 1500],
-        ['FRONZGG', 5000]
-    ];
-
-    defaultPromos.forEach(([code, amount]) => {
-        db.run(`INSERT OR IGNORE INTO promocodes (code, amount) VALUES (?, ?)`, [code, amount]);
+        // Таблица истории игр
+        db.run(`CREATE TABLE IF NOT EXISTS game_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            game_type TEXT,
+            bet_amount INTEGER,
+            win_amount INTEGER,
+            multiplier REAL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(telegram_id)
+        )`, (err) => {
+            if (err) {
+                console.error('Ошибка создания таблицы game_history:', err);
+            } else {
+                console.log('✅ Таблица game_history создана');
+            }
+        });
     });
-
-    console.log('✅ Таблицы инициализированы');
 }
 
 // Хранилище активных WebSocket соединений
@@ -139,11 +203,21 @@ function handleWebSocketMessage(ws, data) {
 function handleAuth(ws, data) {
     const { telegram_id, username, first_name, last_name, photo_url } = data;
 
-    db.get('SELECT * FROM users WHERE telegram_id = ?', [telegram_id], (err, user) => {
-        if (err) {
-            ws.send(JSON.stringify({ type: 'error', message: 'Ошибка БД' }));
+    // Проверяем, что таблица существует
+    db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='users'", (err, table) => {
+        if (err || !table) {
+            console.error('Таблица users не существует, инициализируем БД...');
+            initDatabase();
+            setTimeout(() => handleAuth(ws, data), 1000);
             return;
         }
+
+        db.get('SELECT * FROM users WHERE telegram_id = ?', [telegram_id], (err, user) => {
+            if (err) {
+                console.error('Ошибка получения пользователя:', err);
+                ws.send(JSON.stringify({ type: 'error', message: 'Ошибка БД' }));
+                return;
+            }
 
         if (user) {
             // Обновляем время последней активности
@@ -457,4 +531,39 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
     console.log(`📱 Откройте http://localhost:${PORT}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    console.log('\n🛑 Остановка сервера...');
+    
+    // Закрываем все WebSocket соединения
+    clients.forEach((ws) => {
+        ws.close();
+    });
+    
+    // Закрываем базу данных
+    db.close((err) => {
+        if (err) {
+            console.error('Ошибка закрытия БД:', err);
+        } else {
+            console.log('✅ База данных закрыта');
+        }
+        process.exit(0);
+    });
+});
+
+process.on('SIGTERM', () => {
+    console.log('\n🛑 Остановка сервера...');
+    
+    clients.forEach((ws) => {
+        ws.close();
+    });
+    
+    db.close((err) => {
+        if (err) {
+            console.error('Ошибка закрытия БД:', err);
+        }
+        process.exit(0);
+    });
 });
