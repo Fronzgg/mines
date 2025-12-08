@@ -68,14 +68,14 @@ function initDatabase() {
             } else {
                 console.log('✅ Таблица users создана');
                 
-                // Добавляем основателя @fronzgg
+                // Добавляем основателя @Fronz
                 db.run(`INSERT OR IGNORE INTO users (telegram_id, username, first_name, balance, verified, is_founder) 
                         VALUES (?, ?, ?, ?, ?, ?)`, 
-                        [0, 'fronzgg', 'Founder', 50000, 1, 1], (err) => {
+                        [1908053913, 'Fronz', 'Fronz', 50000, 1, 1], (err) => {
                     if (err) {
                         console.error('Ошибка добавления основателя:', err);
                     } else {
-                        console.log('✅ Основатель @fronzgg добавлен');
+                        console.log('✅ Основатель @Fronz добавлен');
                     }
                 });
             }

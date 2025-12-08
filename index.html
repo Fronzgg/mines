@@ -81,6 +81,8 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            flex-wrap: nowrap;
+            gap: 10px;
         }
 
         .logo {
@@ -129,6 +131,7 @@
             gap: 8px;
             font-weight: 600;
             font-size: 16px;
+            white-space: nowrap;
         }
 
         .fcoins {
@@ -1882,6 +1885,7 @@
             
             balance -= currentBet;
             updateBalance();
+            saveBalanceToServer();
             
             gameActive = true;
             revealedCells = 0;
@@ -2111,6 +2115,7 @@
             
             balance -= crashBet;
             updateBalance();
+            saveBalanceToServer();
             
             crashGameActive = true;
             crashMultiplier = 1.0;
@@ -2235,6 +2240,7 @@
             
             balance -= rouletteBet;
             updateBalance();
+            saveBalanceToServer();
             
             rouletteSpinning = true;
             spinRouletteButton.disabled = true;
@@ -2311,6 +2317,7 @@
             
             balance -= slotsBet;
             updateBalance();
+            saveBalanceToServer();
             
             slotsSpinning = true;
             document.getElementById('spin-slots').disabled = true;
@@ -2391,13 +2398,16 @@
             }, 2000);
         }
 
-        // Обновление баланса
+        // Обновление баланса (только отображение, БЕЗ отправки на сервер!)
         function updateBalance() {
             balanceElement.textContent = balance.toLocaleString();
-            localStorage.setItem('frnmines_balance', balance);
-            
-            // Отправляем обновление на сервер
-            if (currentUser.telegramId) {
+            // НЕ сохраняем в localStorage - баланс только из БД через WebSocket!
+            // НЕ отправляем на сервер - это создает петлю обновлений!
+        }
+        
+        // Сохранение баланса на сервер (вызывается только после игр)
+        function saveBalanceToServer() {
+            if (currentUser.telegramId && isConnected) {
                 sendToServer({
                     type: 'update_balance',
                     telegram_id: currentUser.telegramId,
@@ -2491,12 +2501,16 @@
                     handleAuthSuccess(data.user);
                     break;
                 case 'balance_updated':
-                    balance = data.balance;
-                    updateBalance();
+                    // Обновляем баланс только если он действительно изменился
+                    if (balance !== data.balance) {
+                        balance = data.balance;
+                        balanceElement.textContent = balance.toLocaleString();
+                    }
                     break;
                 case 'balance_changed':
+                    // Админ изменил баланс
                     balance = data.new_balance;
-                    updateBalance();
+                    balanceElement.textContent = balance.toLocaleString();
                     showNotification(`Баланс изменен на ${data.change > 0 ? '+' : ''}${data.change} FCOINS`, data.change > 0 ? 'success' : 'error');
                     break;
                 case 'promo_success':
@@ -2535,8 +2549,9 @@
             currentUser.verified = user.verified === 1;
             currentUser.isFounder = user.is_founder === 1;
             
+            // Устанавливаем баланс ОДИН РАЗ при авторизации
             balance = user.balance;
-            updateBalance();
+            balanceElement.textContent = balance.toLocaleString();
             updateUserProfile();
             
             // Загружаем бейджи
@@ -3084,10 +3099,8 @@
             connectWebSocket();
             
             // Загрузка данных
-            const savedBalance = localStorage.getItem('frnmines_balance');
-            if (savedBalance) {
-                balance = parseInt(savedBalance);
-            }
+            // Баланс загружается из БД через WebSocket, не из localStorage!
+            // Начальный баланс 10000 будет заменен на реальный после авторизации
             
             updateBalance();
             loadPromoCodes();
@@ -3293,6 +3306,7 @@
                 const bonusAmount = 500;
                 balance += bonusAmount;
                 updateBalance();
+                saveBalanceToServer();
                 showNotification(`Вы получили ежедневный бонус: ${bonusAmount} FCOINS!`, 'success');
                 dailyBonusButton.disabled = true;
                 dailyBonusButton.innerHTML = '<i class="fas fa-check"></i> Бонус получен';
