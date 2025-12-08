@@ -1329,7 +1329,7 @@
         <div class="fn-live-content">
             <div class="fn-live-title">ИГРА ОТМЕНЕНА</div>
             <div class="fn-live-box">
-                <div class="fn-live-icon">⚠️</div>
+                <div class="fn-live-icon"><i class="fas fa-exclamation-triangle"></i></div>
                 <div class="fn-live-message">
                     Система FN-Live обнаружила подозрительную активность
                 </div>
@@ -1344,6 +1344,28 @@
     <div class="online-counter">
         <div class="online-dot"></div>
         <span id="online-count">0</span> онлайн
+    </div>
+
+    <!-- Статус FN-Live системы -->
+    <div class="online-counter" id="fn-live-system-status" style="top: 120px; background: linear-gradient(135deg, #4caf50, #2e7d32); color: white;">
+        <i class="fas fa-shield-alt"></i>
+        <span>FN-Live активен</span>
+    </div>
+
+    <!-- Экран технического перерыва -->
+    <div id="maintenance-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.95); z-index: 99998; display: none; align-items: center; justify-content: center;">
+        <div style="text-align: center; padding: 40px; max-width: 600px;">
+            <div style="font-size: 80px; margin-bottom: 20px;"><i class="fas fa-tools"></i></div>
+            <div style="color: #ff9800; font-size: 32px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase;">Технический перерыв</div>
+            <div style="background: linear-gradient(135deg, #ff9800, #f57c00); border: 3px solid #ffb74d; border-radius: 15px; padding: 30px; box-shadow: 0 0 30px rgba(255, 152, 0, 0.5);">
+                <div style="color: white; font-size: 20px; font-weight: 600; margin-bottom: 15px; line-height: 1.5;" id="maintenance-message">
+                    Игры временно недоступны
+                </div>
+                <div style="color: #fff3e0; font-size: 16px;">
+                    Пожалуйста, подождите. Скоро все заработает!
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -1429,7 +1451,7 @@
             <div class="bonus-card">
                 <h3>Ежедневный бонус</h3>
                 <p>Заходи каждый день, чтобы получить награду!</p>
-                <div class="bonus-amount">+500 FCOINS</div>
+                <div class="bonus-amount">+10,000 FCOINS</div>
                 <button class="btn btn-primary" id="daily-bonus-btn">
                     <i class="fas fa-gift"></i> Получить бонус
                 </button>
@@ -1451,20 +1473,17 @@
         <section id="games-section" class="content-section">
             <h2 class="section-title" style="margin-bottom: 20px;">Другие игры</h2>
             <div class="games-section">
-                <div class="crash-game">
-                    <h2>КРАШ (Rocket)</h2>
-                    <div class="crash-display">
-                        <div class="rocket-container">
-                            <div class="rocket" id="rocket">🚀</div>
-                            <div class="crash-graph">
-                                <div class="graph-line" id="graph-line"></div>
-                            </div>
-                        </div>
-                        <div class="crash-multiplier" id="crash-multiplier">1.00x</div>
+                <div class="crash-game" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <h2><i class="fas fa-rocket"></i> ОНЛАЙН РАКЕТА (Lucky Jet)</h2>
+                    <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px;">
+                        <div id="rocket-status" style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">Ожидание...</div>
+                        <div id="rocket-timer" style="font-size: 16px; color: #ffd700; margin-bottom: 15px;">--</div>
+                        <div id="rocket-icon" style="font-size: 60px; transition: transform 0.1s linear;"><i class="fas fa-rocket"></i></div>
+                        <div id="crash-multiplier" style="font-size: 48px; font-weight: 800; color: #ffd700; margin-top: 15px;">1.00x</div>
                     </div>
                     <div class="controls-row">
                         <div class="control-group">
-                            <label>Ставка (FCOINS)</label>
+                            <label style="color: white;">Ставка (FCOINS)</label>
                             <div class="bet-controls">
                                 <button class="bet-btn" id="crash-bet-down">-</button>
                                 <input type="number" id="crash-bet-amount" value="100" min="10" max="100000">
@@ -1473,32 +1492,35 @@
                         </div>
                     </div>
                     <div class="action-buttons">
-                        <button class="btn btn-primary" id="start-crash">
-                            <i class="fas fa-rocket"></i> Запустить ракету
+                        <button class="btn btn-primary" id="start-crash" onclick="placeRocketBet()" style="background: linear-gradient(to right, #4caf50, #2e7d32);">
+                            <i class="fas fa-rocket"></i> Поставить
                         </button>
-                        <button class="btn btn-secondary" id="cash-out-crash">
+                        <button class="btn btn-secondary" id="cash-out-crash" onclick="cashoutRocket()" disabled style="background: #ffd700; color: #000;">
                             <i class="fas fa-hand-holding-usd"></i> Забрать
                         </button>
                     </div>
-                    <p style="margin-top: 15px; font-size: 14px; color: var(--gray);">Заберите выигрыш до взрыва ракеты!</p>
+                    <p style="margin-top: 15px; font-size: 13px; color: rgba(255,255,255,0.8);">
+                        <i class="fas fa-bolt"></i> Все игроки видят одну ракету! Забери до взрыва!
+                    </p>
                 </div>
 
-                <div class="roulette-game">
-                    <h2>РУЛЕТКА</h2>
-                    <div class="roulette-wheel" id="roulette-wheel">
-                        <div class="wheel-numbers" id="wheel-numbers">
-                            <!-- Числа рулетки будут созданы через JS -->
+                <div class="roulette-game" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                    <h2><i class="fas fa-circle-notch"></i> ОНЛАЙН РУЛЕТКА</h2>
+                    <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px;">
+                        <div id="roulette-status" style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">Ожидание...</div>
+                        <div id="roulette-timer" style="font-size: 16px; color: #ffd700; margin-bottom: 15px;">--</div>
+                        <div id="roulette-wheel" style="width: 150px; height: 150px; margin: 0 auto; background: #2e7d32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; color: white; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+                            <i class="fas fa-circle-notch"></i>
                         </div>
-                        <div class="wheel-pointer"></div>
                     </div>
-                    <div class="roulette-bets" id="roulette-bets">
-                        <div class="bet-option bet-red" data-bet="red">Красное (x2)</div>
-                        <div class="bet-option bet-black" data-bet="black">Черное (x2)</div>
-                        <div class="bet-option bet-green" data-bet="green">Зеро (x14)</div>
+                    <div class="roulette-bets" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+                        <div class="bet-option bet-red selected" data-bet="red" onclick="this.parentElement.querySelectorAll('.bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Красное (x2)</div>
+                        <div class="bet-option bet-black" data-bet="black" onclick="this.parentElement.querySelectorAll('.bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Черное (x2)</div>
+                        <div class="bet-option bet-green" data-bet="green" onclick="this.parentElement.querySelectorAll('.bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Зеро (x14)</div>
                     </div>
                     <div class="controls-row" style="margin-top: 20px;">
                         <div class="control-group">
-                            <label>Ставка (FCOINS)</label>
+                            <label style="color: white;">Ставка (FCOINS)</label>
                             <div class="bet-controls">
                                 <button class="bet-btn" id="roulette-bet-down">-</button>
                                 <input type="number" id="roulette-bet-amount" value="100" min="10" max="100000">
@@ -1506,63 +1528,11 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" id="spin-roulette" style="width: 100%; margin-top: 20px;">
-                        <i class="fas fa-dice"></i> Крутить рулетку
-                    </button>
-                </div>
-
-                <div class="crash-game" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <h2>🚀 ОНЛАЙН РАКЕТА (Lucky Jet)</h2>
-                    <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px;">
-                        <div id="rocket-status" style="font-size: 18px; font-weight: 600; color: white; margin-bottom: 10px;">Ожидание...</div>
-                        <div id="rocket-timer" style="font-size: 16px; color: #ffd700; margin-bottom: 15px;">--</div>
-                        <div id="rocket-icon" style="font-size: 60px; transition: transform 0.1s linear;">🚀</div>
-                        <div id="rocket-multiplier" style="font-size: 48px; font-weight: 800; color: #ffd700; margin-top: 15px;">1.00x</div>
-                    </div>
-                    <div class="controls-row">
-                        <div class="control-group">
-                            <label style="color: white;">Ставка (FCOINS)</label>
-                            <input type="number" id="rocket-bet-input" value="100" min="10" max="100000" style="width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 16px; text-align: center;">
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button class="btn btn-primary" id="rocket-bet-btn" onclick="placeRocketBet()" style="flex: 1;">
-                            <i class="fas fa-rocket"></i> Поставить
-                        </button>
-                        <button class="btn btn-secondary" id="rocket-cashout-btn" onclick="cashoutRocket()" disabled style="flex: 1; background: #ffd700; color: #000;">
-                            <i class="fas fa-hand-holding-usd"></i> Забрать
-                        </button>
-                    </div>
-                    <p style="margin-top: 15px; font-size: 13px; color: rgba(255,255,255,0.8);">
-                        ⚡ Все игроки видят одну ракету! Забери до взрыва!
-                    </p>
-                </div>
-
-                <div class="roulette-game" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <h2>🎰 ОНЛАЙН РУЛЕТКА</h2>
-                    <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px;">
-                        <div id="roulette-status" style="font-size: 18px; font-weight: 600; color: white; margin-bottom: 10px;">Ожидание...</div>
-                        <div id="roulette-timer" style="font-size: 16px; color: #ffd700; margin-bottom: 15px;">--</div>
-                        <div id="roulette-wheel-online" style="width: 150px; height: 150px; margin: 0 auto; background: #2e7d32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; color: white; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
-                            🎯
-                        </div>
-                    </div>
-                    <div class="roulette-bets" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
-                        <div class="roulette-bet-option bet-red selected" data-bet="red" onclick="this.parentElement.querySelectorAll('.roulette-bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Красное (x2)</div>
-                        <div class="roulette-bet-option bet-black" data-bet="black" onclick="this.parentElement.querySelectorAll('.roulette-bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Черное (x2)</div>
-                        <div class="roulette-bet-option bet-green" data-bet="green" onclick="this.parentElement.querySelectorAll('.roulette-bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Зеро (x14)</div>
-                    </div>
-                    <div class="controls-row">
-                        <div class="control-group">
-                            <label style="color: white;">Ставка (FCOINS)</label>
-                            <input type="number" id="roulette-bet-input" value="100" min="10" max="100000" style="width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 16px; text-align: center;">
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" id="roulette-bet-btn" onclick="placeRouletteBet()" style="width: 100%; margin-top: 15px;">
+                    <button class="btn btn-primary" id="spin-roulette" onclick="placeRouletteBet()" style="width: 100%; margin-top: 15px;">
                         <i class="fas fa-dice"></i> Поставить
                     </button>
                     <p style="margin-top: 15px; font-size: 13px; color: rgba(255,255,255,0.8);">
-                        ⚡ Все игроки видят одно вращение!
+                        <i class="fas fa-bolt"></i> Все игроки видят одно вращение!
                     </p>
                 </div>
 
@@ -1619,7 +1589,7 @@
             <div class="badges-container" id="fn-live-status-container">
                 <h2 class="section-title">FN-Live Статус</h2>
                 <div id="fn-live-status-display" style="padding: 20px; background: linear-gradient(135deg, #4caf50, #2e7d32); border-radius: 10px; text-align: center; color: white;">
-                    <div style="font-size: 48px; margin-bottom: 10px;">🛡️</div>
+                    <div style="font-size: 48px; margin-bottom: 10px;"><i class="fas fa-shield-alt"></i></div>
                     <div style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">Все хорошо</div>
                     <div style="font-size: 14px; opacity: 0.9;">Ваш аккаунт в безопасности</div>
                 </div>
@@ -2743,20 +2713,28 @@
                 blocked: true,
                 reason: reason,
                 blockedUntil: blockedUntil,
-                duration: duration
+                duration: duration,
+                shown: localStorage.getItem('fnLiveBlockShown') === 'true'
             };
             
-            reasonElement.textContent = reason;
-            overlay.classList.add('active');
-            
-            // Останавливаем все активные игры
-            if (gameActive) gameActive = false;
-            if (crashGameActive) {
-                clearInterval(crashInterval);
-                crashGameActive = false;
+            // Показываем overlay только если еще не показывали
+            if (!currentUser.fnLiveBlock.shown) {
+                reasonElement.textContent = reason;
+                overlay.classList.add('active');
+                localStorage.setItem('fnLiveBlockShown', 'true');
+                
+                // Через 5 секунд скрываем overlay и перекидываем на профиль
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                    switchToProfile();
+                }, 5000);
+            } else {
+                // Если уже показывали, сразу перекидываем на профиль
+                switchToProfile();
             }
-            if (rouletteSpinning) rouletteSpinning = false;
-            if (slotsSpinning) slotsSpinning = false;
+            
+            // Блокируем все игры
+            blockAllGames();
             
             // Обновляем статус в профиле
             updateFNLiveStatus();
@@ -2767,24 +2745,74 @@
             }
         }
         
+        // Переключиться на профиль
+        function switchToProfile() {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.querySelector('[data-section="profile-section"]').classList.add('active');
+            document.getElementById('profile-section').classList.add('active');
+        }
+        
+        // Заблокировать все игры
+        function blockAllGames() {
+            // Останавливаем все активные игры
+            if (gameActive) gameActive = false;
+            if (crashGameActive) {
+                clearInterval(crashInterval);
+                crashGameActive = false;
+            }
+            if (rouletteSpinning) rouletteSpinning = false;
+            if (slotsSpinning) slotsSpinning = false;
+            
+            // Блокируем все кнопки игр кроме профиля
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.dataset.section !== 'profile-section') {
+                    item.style.pointerEvents = 'none';
+                    item.style.opacity = '0.5';
+                }
+            });
+        }
+        
+        // Разблокировать все игры
+        function unblockAllGames() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.style.pointerEvents = 'auto';
+                item.style.opacity = '1';
+            });
+        }
+        
         // Скрыть FN-Live блокировку
         function hideFNLiveBlock() {
             const overlay = document.getElementById('fn-live-overlay');
             overlay.classList.remove('active');
             
             currentUser.fnLiveBlock = { blocked: false };
+            localStorage.removeItem('fnLiveBlockShown');
             
             if (fnLiveBlockTimer) {
                 clearInterval(fnLiveBlockTimer);
                 fnLiveBlockTimer = null;
             }
             
+            unblockAllGames();
             updateFNLiveStatus();
         }
         
         // Таймер FN-Live блокировки
         function startFNLiveTimer(blockedUntil) {
             if (fnLiveBlockTimer) clearInterval(fnLiveBlockTimer);
+            
+            // Проверяем сразу не истекла ли блокировка
+            const now = new Date();
+            const endTime = new Date(blockedUntil);
+            const timeLeft = endTime - now;
+            
+            if (timeLeft <= 0) {
+                // Блокировка уже истекла, снимаем её
+                hideFNLiveBlock();
+                showNotification('Блокировка FN-Live снята!', 'success');
+                return;
+            }
             
             fnLiveBlockTimer = setInterval(() => {
                 const now = new Date();
@@ -2796,11 +2824,17 @@
                     hideFNLiveBlock();
                     showNotification('Блокировка FN-Live снята!', 'success');
                 } else {
-                    // Обновляем отображение времени
+                    // Обновляем отображение времени в overlay
                     const minutes = Math.floor(timeLeft / 60000);
                     const seconds = Math.floor((timeLeft % 60000) / 1000);
-                    document.getElementById('fn-live-reason').textContent = 
-                        `${currentUser.fnLiveBlock.reason}\n\nОсталось: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    const reasonElement = document.getElementById('fn-live-reason');
+                    if (reasonElement) {
+                        reasonElement.textContent = 
+                            `${currentUser.fnLiveBlock.reason}\n\nОсталось: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                    
+                    // Обновляем статус в профиле
+                    updateFNLiveStatus();
                 }
             }, 1000);
         }
@@ -2817,7 +2851,7 @@
                 
                 statusDisplay.style.background = 'linear-gradient(135deg, #ff4444, #cc0000)';
                 statusDisplay.innerHTML = `
-                    <div style="font-size: 48px; margin-bottom: 10px;">🚫</div>
+                    <div style="font-size: 48px; margin-bottom: 10px;"><i class="fas fa-ban"></i></div>
                     <div style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">FN-Live Блокировка</div>
                     <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">${currentUser.fnLiveBlock.reason}</div>
                     <div style="font-size: 16px; font-weight: 600;">Осталось: ${minutes} минут</div>
@@ -2825,7 +2859,7 @@
             } else {
                 statusDisplay.style.background = 'linear-gradient(135deg, #4caf50, #2e7d32)';
                 statusDisplay.innerHTML = `
-                    <div style="font-size: 48px; margin-bottom: 10px;">🛡️</div>
+                    <div style="font-size: 48px; margin-bottom: 10px;"><i class="fas fa-shield-alt"></i></div>
                     <div style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">Все хорошо</div>
                     <div style="font-size: 14px; opacity: 0.9;">Ваш аккаунт в безопасности</div>
                 `;
@@ -2834,8 +2868,14 @@
         
         // Обработка технического перерыва
         function handleMaintenanceMode(enabled, message) {
+            const overlay = document.getElementById('maintenance-overlay');
+            const messageElement = document.getElementById('maintenance-message');
+            
             if (enabled) {
-                showNotification(message, 'error');
+                messageElement.textContent = message || 'Игры временно недоступны';
+                overlay.style.display = 'flex';
+                localStorage.setItem('maintenanceMode', 'true');
+                
                 // Блокируем все игры
                 document.querySelectorAll('.btn-primary').forEach(btn => {
                     if (!btn.id.includes('admin')) {
@@ -2843,17 +2883,31 @@
                     }
                 });
             } else {
-                showNotification(message, 'success');
+                overlay.style.display = 'none';
+                localStorage.removeItem('maintenanceMode');
+                
                 // Разблокируем игры
                 document.querySelectorAll('.btn-primary').forEach(btn => {
                     btn.disabled = false;
                 });
+                
+                showNotification(message || 'Технический перерыв завершен!', 'success');
             }
         }
         
         // Обновление системного статуса
         function updateSystemStatus(settings) {
-            // Обновляем глобальные настройки
+            // Обновляем статус FN-Live системы
+            const fnLiveStatus = document.getElementById('fn-live-system-status');
+            if (settings.fnLiveActive) {
+                fnLiveStatus.style.background = 'linear-gradient(135deg, #4caf50, #2e7d32)';
+                fnLiveStatus.innerHTML = '<i class="fas fa-shield-alt"></i><span>FN-Live активен</span>';
+            } else {
+                fnLiveStatus.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+                fnLiveStatus.innerHTML = '<i class="fas fa-shield-alt"></i><span>FN-Live неактивен</span>';
+            }
+            
+            // Обновляем технический перерыв
             if (settings.maintenanceMode) {
                 handleMaintenanceMode(true, 'Технический перерыв');
             }
@@ -3435,6 +3489,11 @@
             initGameGrid();
             initRoulette();
             
+            // Проверяем технический перерыв при загрузке
+            if (localStorage.getItem('maintenanceMode') === 'true') {
+                handleMaintenanceMode(true, 'Технический перерыв');
+            }
+            
             // Подключаемся к WebSocket
             connectWebSocket();
             
@@ -3746,9 +3805,9 @@
             currentRocketGameId = data.gameId;
             rocketBetPlaced = false;
             document.getElementById('rocket-status').textContent = 'Прием ставок';
-            document.getElementById('rocket-multiplier').textContent = '1.00x';
-            document.getElementById('rocket-bet-btn').disabled = false;
-            document.getElementById('rocket-cashout-btn').disabled = true;
+            document.getElementById('crash-multiplier').textContent = '1.00x';
+            document.getElementById('start-crash').disabled = false;
+            document.getElementById('cash-out-crash').disabled = true;
             
             let timeLeft = data.bettingTime / 1000;
             const timerInterval = setInterval(() => {
@@ -3760,14 +3819,14 @@
         
         function handleRocketStarted(data) {
             document.getElementById('rocket-status').textContent = 'Полет!';
-            document.getElementById('rocket-bet-btn').disabled = true;
+            document.getElementById('start-crash').disabled = true;
             if (rocketBetPlaced) {
-                document.getElementById('rocket-cashout-btn').disabled = false;
+                document.getElementById('cash-out-crash').disabled = false;
             }
         }
         
         function handleRocketMultiplierUpdate(data) {
-            document.getElementById('rocket-multiplier').textContent = data.multiplier.toFixed(2) + 'x';
+            document.getElementById('crash-multiplier').textContent = data.multiplier.toFixed(2) + 'x';
             const rocket = document.getElementById('rocket-icon');
             const progress = Math.min((data.multiplier - 1) * 20, 100);
             rocket.style.transform = `translate(${progress}%, -${progress}%)`;
@@ -3775,17 +3834,17 @@
         
         function handleRocketCrashed(data) {
             document.getElementById('rocket-status').textContent = 'Взрыв!';
-            document.getElementById('rocket-multiplier').textContent = data.crashPoint.toFixed(2) + 'x';
-            document.getElementById('rocket-cashout-btn').disabled = true;
-            document.getElementById('rocket-icon').textContent = '💥';
+            document.getElementById('crash-multiplier').textContent = data.crashPoint.toFixed(2) + 'x';
+            document.getElementById('cash-out-crash').disabled = true;
+            document.getElementById('rocket-icon').innerHTML = '<i class="fas fa-bomb"></i>';
             setTimeout(() => {
-                document.getElementById('rocket-icon').textContent = '🚀';
+                document.getElementById('rocket-icon').innerHTML = '<i class="fas fa-rocket"></i>';
                 document.getElementById('rocket-icon').style.transform = 'translate(0, 0)';
             }, 3000);
         }
         
         async function placeRocketBet() {
-            const betAmount = parseInt(document.getElementById('rocket-bet-input').value);
+            const betAmount = parseInt(document.getElementById('crash-bet-amount').value);
             if (!betAmount || betAmount < 10) {
                 showNotification('Минимальная ставка 10 FCOINS', 'error');
                 return;
@@ -3804,7 +3863,7 @@
                     balance = result.newBalance;
                     balanceElement.textContent = balance.toLocaleString();
                     showNotification(`Ставка ${betAmount} FCOINS принята!`, 'success');
-                    document.getElementById('rocket-bet-btn').disabled = true;
+                    document.getElementById('start-crash').disabled = true;
                 } else {
                     showNotification(result.message, 'error');
                 }
@@ -3855,22 +3914,22 @@
         
         function handleRouletteStarted(data) {
             document.getElementById('roulette-status').textContent = 'Вращение...';
-            document.getElementById('roulette-bet-btn').disabled = true;
-            const wheel = document.getElementById('roulette-wheel-online');
+            document.getElementById('spin-roulette').disabled = true;
+            const wheel = document.getElementById('roulette-wheel');
             wheel.style.animation = 'wheelSpin 10s cubic-bezier(0.2, 0.8, 0.3, 1) forwards';
         }
         
         function handleRouletteResult(data) {
             document.getElementById('roulette-status').textContent = `Выпало: ${data.resultNumber}`;
             setTimeout(() => {
-                const wheel = document.getElementById('roulette-wheel-online');
+                const wheel = document.getElementById('roulette-wheel');
                 wheel.style.animation = 'none';
             }, 10000);
         }
         
         async function placeRouletteBet() {
-            const betAmount = parseInt(document.getElementById('roulette-bet-input').value);
-            const betType = document.querySelector('.roulette-bet-option.selected')?.dataset.bet || 'red';
+            const betAmount = parseInt(document.getElementById('roulette-bet-amount').value);
+            const betType = document.querySelector('.bet-option.selected')?.dataset.bet || 'red';
             
             if (!betAmount || betAmount < 10) {
                 showNotification('Минимальная ставка 10 FCOINS', 'error');
@@ -3895,7 +3954,7 @@
                     balance = result.newBalance;
                     balanceElement.textContent = balance.toLocaleString();
                     showNotification(`Ставка ${betAmount} FCOINS на ${betType} принята!`, 'success');
-                    document.getElementById('roulette-bet-btn').disabled = true;
+                    document.getElementById('spin-roulette').disabled = true;
                 } else {
                     showNotification(result.message, 'error');
                 }
