@@ -219,65 +219,66 @@ function handleAuth(ws, data) {
                 return;
             }
 
-        if (user) {
-            // Обновляем время последней активности
-            db.run('UPDATE users SET last_active = CURRENT_TIMESTAMP WHERE telegram_id = ?', [telegram_id]);
-            
-            // Получаем бейджи пользователя
-            db.all('SELECT badge_type FROM badges WHERE user_id = ?', [telegram_id], (err, badges) => {
-                const badgeTypes = badges ? badges.map(b => b.badge_type) : [];
+            if (user) {
+                // Обновляем время последней активности
+                db.run('UPDATE users SET last_active = CURRENT_TIMESTAMP WHERE telegram_id = ?', [telegram_id]);
                 
-                clients.set(telegram_id, ws);
-                ws.userId = telegram_id;
-                
-                ws.send(JSON.stringify({
-                    type: 'auth_success',
-                    user: {
-                        ...user,
-                        badges: badgeTypes
-                    }
-                }));
-
-                broadcastOnlineCount();
-                console.log(`✅ Пользователь ${username} (${telegram_id}) авторизован`);
-            });
-        } else {
-            // Создаем нового пользователя
-            db.run(`INSERT INTO users (telegram_id, username, first_name, last_name, photo_url) 
-                    VALUES (?, ?, ?, ?, ?)`,
-                [telegram_id, username, first_name, last_name, photo_url],
-                function(err) {
-                    if (err) {
-                        ws.send(JSON.stringify({ type: 'error', message: 'Ошибка создания пользователя' }));
-                        return;
-                    }
-
-                    // Выдаем базовый бейдж
-                    db.run('INSERT INTO badges (user_id, badge_type) VALUES (?, ?)', [telegram_id, 'player']);
-
+                // Получаем бейджи пользователя
+                db.all('SELECT badge_type FROM badges WHERE user_id = ?', [telegram_id], (err, badges) => {
+                    const badgeTypes = badges ? badges.map(b => b.badge_type) : [];
+                    
                     clients.set(telegram_id, ws);
                     ws.userId = telegram_id;
-
+                    
                     ws.send(JSON.stringify({
                         type: 'auth_success',
                         user: {
-                            telegram_id,
-                            username,
-                            first_name,
-                            last_name,
-                            photo_url,
-                            balance: 10000,
-                            verified: 0,
-                            is_founder: 0,
-                            badges: ['player']
+                            ...user,
+                            badges: badgeTypes
                         }
                     }));
 
                     broadcastOnlineCount();
-                    console.log(`🆕 Новый пользователь ${username} (${telegram_id}) зарегистрирован`);
-                }
-            );
-        }
+                    console.log(`✅ Пользователь ${username} (${telegram_id}) авторизован`);
+                });
+            } else {
+                // Создаем нового пользователя
+                db.run(`INSERT INTO users (telegram_id, username, first_name, last_name, photo_url) 
+                        VALUES (?, ?, ?, ?, ?)`,
+                    [telegram_id, username, first_name, last_name, photo_url],
+                    function(err) {
+                        if (err) {
+                            ws.send(JSON.stringify({ type: 'error', message: 'Ошибка создания пользователя' }));
+                            return;
+                        }
+
+                        // Выдаем базовый бейдж
+                        db.run('INSERT INTO badges (user_id, badge_type) VALUES (?, ?)', [telegram_id, 'player']);
+
+                        clients.set(telegram_id, ws);
+                        ws.userId = telegram_id;
+
+                        ws.send(JSON.stringify({
+                            type: 'auth_success',
+                            user: {
+                                telegram_id,
+                                username,
+                                first_name,
+                                last_name,
+                                photo_url,
+                                balance: 10000,
+                                verified: 0,
+                                is_founder: 0,
+                                badges: ['player']
+                            }
+                        }));
+
+                        broadcastOnlineCount();
+                        console.log(`🆕 Новый пользователь ${username} (${telegram_id}) зарегистрирован`);
+                    }
+                );
+            }
+        });
     });
 }
 
