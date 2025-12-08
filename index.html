@@ -778,6 +778,12 @@
             100% { transform: translateY(-20px); }
         }
 
+        /* Анимация рулетки */
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1800deg); }
+        }
+
         .slots-result {
             margin: 15px 0;
             font-size: 18px;
@@ -1279,11 +1285,31 @@
         </div>
         
         <div class="admin-section">
-            <h3>FN-Live система</h3>
+            <h3>⚙️ Системные настройки</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 12px; background: var(--secondary); border-radius: 8px;">
+                <span style="font-weight: 600;">Технический перерыв</span>
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="maintenance-toggle" style="width: 20px; height: 20px; cursor: pointer;">
+                </label>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 12px; background: var(--secondary); border-radius: 8px;">
+                <span style="font-weight: 600;">FN-Live система</span>
+                <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="checkbox" id="fn-live-toggle" checked style="width: 20px; height: 20px; cursor: pointer;">
+                </label>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h3>🛡️ FN-Live блокировка</h3>
             <input type="number" class="admin-input" id="fn-live-user-id" placeholder="Telegram ID пользователя">
+            <input type="number" class="admin-input" id="fn-live-duration" placeholder="Длительность (минуты)" value="10">
             <input type="text" class="admin-input" id="fn-live-reason" placeholder="Причина блокировки (опционально)">
             <button class="admin-btn" id="fn-live-block-btn" style="background: linear-gradient(to right, #ff4444, #cc0000);">
-                <i class="fas fa-shield-alt"></i> Заблокировать игру (FN-Live)
+                <i class="fas fa-shield-alt"></i> Заблокировать
+            </button>
+            <button class="admin-btn" id="fn-live-unblock-btn" style="background: linear-gradient(to right, #4caf50, #2e7d32);">
+                <i class="fas fa-unlock"></i> Снять блокировку
             </button>
         </div>
         
@@ -1485,6 +1511,61 @@
                     </button>
                 </div>
 
+                <div class="crash-game" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h2>🚀 ОНЛАЙН РАКЕТА (Lucky Jet)</h2>
+                    <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px;">
+                        <div id="rocket-status" style="font-size: 18px; font-weight: 600; color: white; margin-bottom: 10px;">Ожидание...</div>
+                        <div id="rocket-timer" style="font-size: 16px; color: #ffd700; margin-bottom: 15px;">--</div>
+                        <div id="rocket-icon" style="font-size: 60px; transition: transform 0.1s linear;">🚀</div>
+                        <div id="rocket-multiplier" style="font-size: 48px; font-weight: 800; color: #ffd700; margin-top: 15px;">1.00x</div>
+                    </div>
+                    <div class="controls-row">
+                        <div class="control-group">
+                            <label style="color: white;">Ставка (FCOINS)</label>
+                            <input type="number" id="rocket-bet-input" value="100" min="10" max="100000" style="width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 16px; text-align: center;">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn btn-primary" id="rocket-bet-btn" onclick="placeRocketBet()" style="flex: 1;">
+                            <i class="fas fa-rocket"></i> Поставить
+                        </button>
+                        <button class="btn btn-secondary" id="rocket-cashout-btn" onclick="cashoutRocket()" disabled style="flex: 1; background: #ffd700; color: #000;">
+                            <i class="fas fa-hand-holding-usd"></i> Забрать
+                        </button>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 13px; color: rgba(255,255,255,0.8);">
+                        ⚡ Все игроки видят одну ракету! Забери до взрыва!
+                    </p>
+                </div>
+
+                <div class="roulette-game" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h2>🎰 ОНЛАЙН РУЛЕТКА</h2>
+                    <div style="text-align: center; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; margin-bottom: 15px;">
+                        <div id="roulette-status" style="font-size: 18px; font-weight: 600; color: white; margin-bottom: 10px;">Ожидание...</div>
+                        <div id="roulette-timer" style="font-size: 16px; color: #ffd700; margin-bottom: 15px;">--</div>
+                        <div id="roulette-wheel-online" style="width: 150px; height: 150px; margin: 0 auto; background: #2e7d32; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; color: white; box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+                            🎯
+                        </div>
+                    </div>
+                    <div class="roulette-bets" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+                        <div class="roulette-bet-option bet-red selected" data-bet="red" onclick="this.parentElement.querySelectorAll('.roulette-bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Красное (x2)</div>
+                        <div class="roulette-bet-option bet-black" data-bet="black" onclick="this.parentElement.querySelectorAll('.roulette-bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Черное (x2)</div>
+                        <div class="roulette-bet-option bet-green" data-bet="green" onclick="this.parentElement.querySelectorAll('.roulette-bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Зеро (x14)</div>
+                    </div>
+                    <div class="controls-row">
+                        <div class="control-group">
+                            <label style="color: white;">Ставка (FCOINS)</label>
+                            <input type="number" id="roulette-bet-input" value="100" min="10" max="100000" style="width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 16px; text-align: center;">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="roulette-bet-btn" onclick="placeRouletteBet()" style="width: 100%; margin-top: 15px;">
+                        <i class="fas fa-dice"></i> Поставить
+                    </button>
+                    <p style="margin-top: 15px; font-size: 13px; color: rgba(255,255,255,0.8);">
+                        ⚡ Все игроки видят одно вращение!
+                    </p>
+                </div>
+
                 <div class="slots-game">
                     <h2>СЛОТЫ</h2>
                     <div class="slots-machine">
@@ -1531,6 +1612,16 @@
                     <button class="btn btn-primary" id="admin-access-btn">
                         <i class="fas fa-cog"></i> Админ-панель
                     </button>
+                </div>
+            </div>
+
+            <!-- FN-Live статус -->
+            <div class="badges-container" id="fn-live-status-container">
+                <h2 class="section-title">FN-Live Статус</h2>
+                <div id="fn-live-status-display" style="padding: 20px; background: linear-gradient(135deg, #4caf50, #2e7d32); border-radius: 10px; text-align: center; color: white;">
+                    <div style="font-size: 48px; margin-bottom: 10px;">🛡️</div>
+                    <div style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">Все хорошо</div>
+                    <div style="font-size: 14px; opacity: 0.9;">Ваш аккаунт в безопасности</div>
                 </div>
             </div>
 
@@ -1672,6 +1763,13 @@
             '💎💎💎': 20,
             '7️⃣7️⃣7️⃣': 50
         };
+        
+        // Переменные для онлайн игр
+        let currentRocketGameId = null;
+        let rocketBetPlaced = false;
+        let currentRouletteGameId = null;
+        let rouletteBetPlaced = false;
+        let dailyBonusTimer = null;
         
         // Telegram Web App
         let tg = window.Telegram?.WebApp;
@@ -2529,7 +2627,56 @@
                     showNotification(data.message, 'admin');
                     break;
                 case 'fn_live_block':
-                    showFNLiveBlock(data.reason);
+                    showFNLiveBlock(data.reason, data.blockedUntil, data.duration);
+                    break;
+                case 'fn_live_unblock':
+                    hideFNLiveBlock();
+                    showNotification('Блокировка FN-Live снята!', 'success');
+                    break;
+                case 'maintenance_mode':
+                    handleMaintenanceMode(data.enabled, data.message);
+                    break;
+                case 'system_status':
+                    updateSystemStatus(data.settings);
+                    break;
+                case 'daily_bonus_claimed':
+                    balance = data.new_balance;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Ежедневный бонус получен: +${data.amount.toLocaleString()} FCOINS!`, 'success');
+                    break;
+                case 'rocket_new_round':
+                    handleRocketNewRound(data);
+                    break;
+                case 'rocket_started':
+                    handleRocketStarted(data);
+                    break;
+                case 'rocket_multiplier_update':
+                    handleRocketMultiplierUpdate(data);
+                    break;
+                case 'rocket_crashed':
+                    handleRocketCrashed(data);
+                    break;
+                case 'rocket_win':
+                    balance += data.amount;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Ракета: выигрыш ${data.amount} FCOINS (${data.multiplier.toFixed(2)}x)!`, 'success');
+                    break;
+                case 'rocket_cashout_success':
+                    showNotification(`Забрано ${data.amount} FCOINS на ${data.multiplier.toFixed(2)}x!`, 'success');
+                    break;
+                case 'roulette_new_round':
+                    handleRouletteNewRound(data);
+                    break;
+                case 'roulette_started':
+                    handleRouletteStarted(data);
+                    break;
+                case 'roulette_result':
+                    handleRouletteResult(data);
+                    break;
+                case 'roulette_win':
+                    balance += data.amount;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Рулетка: выигрыш ${data.amount} FCOINS (x${data.multiplier})!`, 'success');
                     break;
                 case 'online_count':
                     document.getElementById('online-count').textContent = data.count;
@@ -2571,37 +2718,145 @@
                 document.getElementById('admin-access-btn').style.display = 'none';
             }
             
+            // Проверяем FN-Live блокировку
+            if (user.fnLiveBlock && user.fnLiveBlock.blocked) {
+                currentUser.fnLiveBlock = user.fnLiveBlock;
+                showFNLiveBlock(user.fnLiveBlock.reason, user.fnLiveBlock.blockedUntil);
+            } else {
+                currentUser.fnLiveBlock = { blocked: false };
+            }
+            
+            updateFNLiveStatus();
             showNotification(`Добро пожаловать, ${currentUser.name}!`, 'success');
         }
         
-        // Показать FN-Live блокировку
-        function showFNLiveBlock(reason) {
+        // Глобальные переменные для онлайн игр и FN-Live
+        let fnLiveBlockTimer = null;
+        
+        // Показать FN-Live блокировку с таймером
+        function showFNLiveBlock(reason, blockedUntil, duration) {
             const overlay = document.getElementById('fn-live-overlay');
             const reasonElement = document.getElementById('fn-live-reason');
+            
+            // Сохраняем информацию о блокировке
+            currentUser.fnLiveBlock = {
+                blocked: true,
+                reason: reason,
+                blockedUntil: blockedUntil,
+                duration: duration
+            };
             
             reasonElement.textContent = reason;
             overlay.classList.add('active');
             
             // Останавливаем все активные игры
-            if (gameActive) {
-                gameActive = false;
-            }
+            if (gameActive) gameActive = false;
             if (crashGameActive) {
                 clearInterval(crashInterval);
                 crashGameActive = false;
             }
-            if (rouletteSpinning) {
-                rouletteSpinning = false;
+            if (rouletteSpinning) rouletteSpinning = false;
+            if (slotsSpinning) slotsSpinning = false;
+            
+            // Обновляем статус в профиле
+            updateFNLiveStatus();
+            
+            // Запускаем таймер обратного отсчета
+            if (blockedUntil) {
+                startFNLiveTimer(blockedUntil);
             }
-            if (slotsSpinning) {
-                slotsSpinning = false;
+        }
+        
+        // Скрыть FN-Live блокировку
+        function hideFNLiveBlock() {
+            const overlay = document.getElementById('fn-live-overlay');
+            overlay.classList.remove('active');
+            
+            currentUser.fnLiveBlock = { blocked: false };
+            
+            if (fnLiveBlockTimer) {
+                clearInterval(fnLiveBlockTimer);
+                fnLiveBlockTimer = null;
             }
             
-            // Блокировка на 10 секунд
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                showNotification('Блокировка снята. Будьте осторожны!', 'info');
-            }, 10000);
+            updateFNLiveStatus();
+        }
+        
+        // Таймер FN-Live блокировки
+        function startFNLiveTimer(blockedUntil) {
+            if (fnLiveBlockTimer) clearInterval(fnLiveBlockTimer);
+            
+            fnLiveBlockTimer = setInterval(() => {
+                const now = new Date();
+                const endTime = new Date(blockedUntil);
+                const timeLeft = endTime - now;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(fnLiveBlockTimer);
+                    hideFNLiveBlock();
+                    showNotification('Блокировка FN-Live снята!', 'success');
+                } else {
+                    // Обновляем отображение времени
+                    const minutes = Math.floor(timeLeft / 60000);
+                    const seconds = Math.floor((timeLeft % 60000) / 1000);
+                    document.getElementById('fn-live-reason').textContent = 
+                        `${currentUser.fnLiveBlock.reason}\n\nОсталось: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+        
+        // Обновить статус FN-Live в профиле
+        function updateFNLiveStatus() {
+            const statusDisplay = document.getElementById('fn-live-status-display');
+            
+            if (currentUser.fnLiveBlock && currentUser.fnLiveBlock.blocked) {
+                const endTime = new Date(currentUser.fnLiveBlock.blockedUntil);
+                const now = new Date();
+                const timeLeft = endTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                
+                statusDisplay.style.background = 'linear-gradient(135deg, #ff4444, #cc0000)';
+                statusDisplay.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 10px;">🚫</div>
+                    <div style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">FN-Live Блокировка</div>
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">${currentUser.fnLiveBlock.reason}</div>
+                    <div style="font-size: 16px; font-weight: 600;">Осталось: ${minutes} минут</div>
+                `;
+            } else {
+                statusDisplay.style.background = 'linear-gradient(135deg, #4caf50, #2e7d32)';
+                statusDisplay.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 10px;">🛡️</div>
+                    <div style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">Все хорошо</div>
+                    <div style="font-size: 14px; opacity: 0.9;">Ваш аккаунт в безопасности</div>
+                `;
+            }
+        }
+        
+        // Обработка технического перерыва
+        function handleMaintenanceMode(enabled, message) {
+            if (enabled) {
+                showNotification(message, 'error');
+                // Блокируем все игры
+                document.querySelectorAll('.btn-primary').forEach(btn => {
+                    if (!btn.id.includes('admin')) {
+                        btn.disabled = true;
+                    }
+                });
+            } else {
+                showNotification(message, 'success');
+                // Разблокируем игры
+                document.querySelectorAll('.btn-primary').forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+        }
+        
+        // Обновление системного статуса
+        function updateSystemStatus(settings) {
+            // Обновляем глобальные настройки
+            if (settings.maintenanceMode) {
+                handleMaintenanceMode(true, 'Технический перерыв');
+            }
         }
         
         // Отправка данных на сервер
@@ -3027,6 +3282,7 @@
             // FN-Live блокировка
             document.getElementById('fn-live-block-btn').addEventListener('click', async () => {
                 const userId = document.getElementById('fn-live-user-id').value;
+                const duration = parseInt(document.getElementById('fn-live-duration').value) || 10;
                 const reason = document.getElementById('fn-live-reason').value || 'Система FN-Live посчитала ваши действия необычными';
                 
                 if (!userId) {
@@ -3034,7 +3290,7 @@
                     return;
                 }
                 
-                if (!confirm(`Заблокировать игру для пользователя ${userId}?`)) {
+                if (!confirm(`Заблокировать игру для пользователя ${userId} на ${duration} минут?`)) {
                     return;
                 }
                 
@@ -3045,6 +3301,7 @@
                         body: JSON.stringify({
                             admin_id: currentUser.telegramId,
                             user_id: parseInt(userId),
+                            duration: duration,
                             reason: reason
                         })
                     });
@@ -3052,7 +3309,7 @@
                     const result = await response.json();
                     
                     if (result.success) {
-                        showNotification('FN-Live блокировка отправлена!', 'success');
+                        showNotification(`FN-Live блокировка на ${duration} минут отправлена!`, 'success');
                         document.getElementById('fn-live-user-id').value = '';
                         document.getElementById('fn-live-reason').value = '';
                     } else {
@@ -3060,6 +3317,89 @@
                     }
                 } catch (err) {
                     showNotification('Ошибка отправки блокировки', 'error');
+                }
+            });
+            
+            // Снятие FN-Live блокировки
+            document.getElementById('fn-live-unblock-btn').addEventListener('click', async () => {
+                const userId = document.getElementById('fn-live-user-id').value;
+                
+                if (!userId) {
+                    showNotification('Введите Telegram ID пользователя', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/fn-live-unblock', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: parseInt(userId)
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Блокировка снята!', 'success');
+                        document.getElementById('fn-live-user-id').value = '';
+                    } else {
+                        showNotification('Ошибка снятия блокировки', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка', 'error');
+                }
+            });
+            
+            // Технический перерыв
+            document.getElementById('maintenance-toggle').addEventListener('change', async (e) => {
+                const enabled = e.target.checked;
+                
+                try {
+                    const response = await fetch('/api/admin/maintenance', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            enabled: enabled,
+                            message: enabled ? 'Технический перерыв. Игры временно недоступны.' : 'Технический перерыв завершен!'
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка', 'error');
+                    e.target.checked = !enabled;
+                }
+            });
+            
+            // Переключатель FN-Live системы
+            document.getElementById('fn-live-toggle').addEventListener('change', async (e) => {
+                const enabled = e.target.checked;
+                
+                try {
+                    const response = await fetch('/api/admin/fn-live-toggle', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            enabled: enabled
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка', 'error');
+                    e.target.checked = !enabled;
                 }
             });
         }
@@ -3302,16 +3642,81 @@
             });
             
             // Обработка ежедневного бонуса
-            dailyBonusButton.addEventListener('click', () => {
-                const bonusAmount = 500;
-                balance += bonusAmount;
-                updateBalance();
-                saveBalanceToServer();
-                showNotification(`Вы получили ежедневный бонус: ${bonusAmount} FCOINS!`, 'success');
-                dailyBonusButton.disabled = true;
-                dailyBonusButton.innerHTML = '<i class="fas fa-check"></i> Бонус получен';
-                dailyBonusButton.style.background = 'var(--gray)';
+            dailyBonusButton.addEventListener('click', async () => {
+                if (!currentUser.telegramId) {
+                    showNotification('Авторизуйтесь через Telegram', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/daily-bonus', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ telegram_id: currentUser.telegramId })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        balance = result.new_balance;
+                        balanceElement.textContent = balance.toLocaleString();
+                        showNotification(`Ежедневный бонус получен: +${result.amount.toLocaleString()} FCOINS!`, 'success');
+                        
+                        // Запускаем таймер до следующего бонуса
+                        startDailyBonusTimer(result.nextBonusIn);
+                    } else {
+                        showNotification(result.message, 'error');
+                        if (result.nextBonusIn) {
+                            startDailyBonusTimer(result.nextBonusIn);
+                        }
+                    }
+                } catch (err) {
+                    showNotification('Ошибка получения бонуса', 'error');
+                }
             });
+            
+            // Проверяем доступность бонуса при загрузке
+            async function checkDailyBonus() {
+                if (!currentUser.telegramId) return;
+                
+                try {
+                    const response = await fetch(`/api/daily-bonus/check/${currentUser.telegramId}`);
+                    const result = await response.json();
+                    
+                    if (!result.available && result.nextBonusIn > 0) {
+                        startDailyBonusTimer(result.nextBonusIn);
+                    }
+                } catch (err) {
+                    console.error('Ошибка проверки бонуса:', err);
+                }
+            }
+            
+            // Таймер ежедневного бонуса
+            function startDailyBonusTimer(timeLeft) {
+                dailyBonusButton.disabled = true;
+                
+                if (dailyBonusTimer) clearInterval(dailyBonusTimer);
+                
+                dailyBonusTimer = setInterval(() => {
+                    timeLeft -= 1000;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(dailyBonusTimer);
+                        dailyBonusButton.disabled = false;
+                        dailyBonusButton.innerHTML = '<i class="fas fa-gift"></i> Получить бонус';
+                        dailyBonusButton.style.background = 'linear-gradient(to right, var(--primary), var(--accent))';
+                        showNotification('Ежедневный бонус доступен!', 'success');
+                    } else {
+                        const hours = Math.floor(timeLeft / 3600000);
+                        const minutes = Math.floor((timeLeft % 3600000) / 60000);
+                        dailyBonusButton.innerHTML = `<i class="fas fa-clock"></i> ${hours}ч ${minutes}м`;
+                        dailyBonusButton.style.background = 'var(--gray)';
+                    }
+                }, 1000);
+            }
+            
+            // Проверяем бонус после авторизации
+            setTimeout(checkDailyBonus, 2000);
             
             // Активация промокода
             applyPromoButton.addEventListener('click', () => {
@@ -3331,6 +3736,172 @@
                 
                 promoCodeInput.value = '';
             });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // ОНЛАЙН РАКЕТА (Lucky Jet)
+        // ═══════════════════════════════════════════════════════════════
+        
+        function handleRocketNewRound(data) {
+            currentRocketGameId = data.gameId;
+            rocketBetPlaced = false;
+            document.getElementById('rocket-status').textContent = 'Прием ставок';
+            document.getElementById('rocket-multiplier').textContent = '1.00x';
+            document.getElementById('rocket-bet-btn').disabled = false;
+            document.getElementById('rocket-cashout-btn').disabled = true;
+            
+            let timeLeft = data.bettingTime / 1000;
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('rocket-timer').textContent = `${timeLeft}с`;
+                if (timeLeft <= 0) clearInterval(timerInterval);
+            }, 1000);
+        }
+        
+        function handleRocketStarted(data) {
+            document.getElementById('rocket-status').textContent = 'Полет!';
+            document.getElementById('rocket-bet-btn').disabled = true;
+            if (rocketBetPlaced) {
+                document.getElementById('rocket-cashout-btn').disabled = false;
+            }
+        }
+        
+        function handleRocketMultiplierUpdate(data) {
+            document.getElementById('rocket-multiplier').textContent = data.multiplier.toFixed(2) + 'x';
+            const rocket = document.getElementById('rocket-icon');
+            const progress = Math.min((data.multiplier - 1) * 20, 100);
+            rocket.style.transform = `translate(${progress}%, -${progress}%)`;
+        }
+        
+        function handleRocketCrashed(data) {
+            document.getElementById('rocket-status').textContent = 'Взрыв!';
+            document.getElementById('rocket-multiplier').textContent = data.crashPoint.toFixed(2) + 'x';
+            document.getElementById('rocket-cashout-btn').disabled = true;
+            document.getElementById('rocket-icon').textContent = '💥';
+            setTimeout(() => {
+                document.getElementById('rocket-icon').textContent = '🚀';
+                document.getElementById('rocket-icon').style.transform = 'translate(0, 0)';
+            }, 3000);
+        }
+        
+        async function placeRocketBet() {
+            const betAmount = parseInt(document.getElementById('rocket-bet-input').value);
+            if (!betAmount || betAmount < 10) {
+                showNotification('Минимальная ставка 10 FCOINS', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/rocket/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: currentUser.telegramId, bet_amount: betAmount })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    rocketBetPlaced = true;
+                    balance = result.newBalance;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Ставка ${betAmount} FCOINS принята!`, 'success');
+                    document.getElementById('rocket-bet-btn').disabled = true;
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (err) {
+                showNotification('Ошибка ставки', 'error');
+            }
+        }
+        
+        async function cashoutRocket() {
+            try {
+                const response = await fetch('/api/rocket/cashout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: currentUser.telegramId })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    balance += result.winAmount;
+                    balanceElement.textContent = balance.toLocaleString();
+                    document.getElementById('rocket-cashout-btn').disabled = true;
+                    rocketBetPlaced = false;
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (err) {
+                showNotification('Ошибка вывода', 'error');
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // ОНЛАЙН РУЛЕТКА
+        // ═══════════════════════════════════════════════════════════════
+        
+        function handleRouletteNewRound(data) {
+            currentRouletteGameId = data.gameId;
+            rouletteBetPlaced = false;
+            document.getElementById('roulette-status').textContent = 'Прием ставок';
+            document.getElementById('roulette-bet-btn').disabled = false;
+            
+            let timeLeft = data.bettingTime / 1000;
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('roulette-timer').textContent = `${timeLeft}с`;
+                if (timeLeft <= 0) clearInterval(timerInterval);
+            }, 1000);
+        }
+        
+        function handleRouletteStarted(data) {
+            document.getElementById('roulette-status').textContent = 'Вращение...';
+            document.getElementById('roulette-bet-btn').disabled = true;
+            const wheel = document.getElementById('roulette-wheel-online');
+            wheel.style.animation = 'wheelSpin 10s cubic-bezier(0.2, 0.8, 0.3, 1) forwards';
+        }
+        
+        function handleRouletteResult(data) {
+            document.getElementById('roulette-status').textContent = `Выпало: ${data.resultNumber}`;
+            setTimeout(() => {
+                const wheel = document.getElementById('roulette-wheel-online');
+                wheel.style.animation = 'none';
+            }, 10000);
+        }
+        
+        async function placeRouletteBet() {
+            const betAmount = parseInt(document.getElementById('roulette-bet-input').value);
+            const betType = document.querySelector('.roulette-bet-option.selected')?.dataset.bet || 'red';
+            
+            if (!betAmount || betAmount < 10) {
+                showNotification('Минимальная ставка 10 FCOINS', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/roulette/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        telegram_id: currentUser.telegramId, 
+                        bet_type: betType,
+                        bet_value: betType,
+                        bet_amount: betAmount 
+                    })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    rouletteBetPlaced = true;
+                    balance = result.newBalance;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Ставка ${betAmount} FCOINS на ${betType} принята!`, 'success');
+                    document.getElementById('roulette-bet-btn').disabled = true;
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (err) {
+                showNotification('Ошибка ставки', 'error');
+            }
         }
 
         // Запуск инициализации при загрузке страницы
