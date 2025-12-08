@@ -1754,12 +1754,12 @@
         
         // Пользователь (только 1 тестовый профиль)
         let currentUser = {
-            id: 1,
+            id: 12345,
             name: "Игрок_Тест",
             username: "test_user",
             avatar: "https://i.pravatar.cc/150?img=12",
             verified: false,
-            telegramId: null
+            telegramId: 12345 // Тестовый ID для локального тестирования
         };
         
         // Админ данные
@@ -2509,14 +2509,18 @@
                 
                 // Авторизуемся
                 if (currentUser.telegramId) {
-                    ws.send(JSON.stringify({
+                    const authData = {
                         type: 'auth',
                         telegram_id: currentUser.telegramId,
                         username: currentUser.username,
                         first_name: currentUser.name.split(' ')[0],
                         last_name: currentUser.name.split(' ')[1] || '',
                         photo_url: currentUser.avatar
-                    }));
+                    };
+                    console.log('Отправка авторизации:', authData);
+                    ws.send(JSON.stringify(authData));
+                } else {
+                    console.warn('⚠️ telegramId не установлен, авторизация не отправлена');
                 }
                 
                 if (reconnectInterval) {
