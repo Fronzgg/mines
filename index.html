@@ -2853,6 +2853,12 @@
         
         // Обработка технического перерыва
         function handleMaintenanceMode(enabled, message) {
+            // Основатель не видит технический перерыв
+            if (currentUser.isFounder) {
+                console.log('Технический перерыв активен, но вы основатель - можете продолжать работу');
+                return;
+            }
+            
             const overlay = document.getElementById('maintenance-overlay');
             const messageElement = document.getElementById('maintenance-message');
             
@@ -3474,13 +3480,15 @@
             initGameGrid();
             initRoulette();
             
-            // Проверяем технический перерыв при загрузке
-            if (localStorage.getItem('maintenanceMode') === 'true') {
-                handleMaintenanceMode(true, 'Технический перерыв');
-            }
-            
             // Подключаемся к WebSocket
             connectWebSocket();
+            
+            // Проверяем технический перерыв при загрузке (после небольшой задержки, чтобы isFounder успел установиться)
+            setTimeout(() => {
+                if (localStorage.getItem('maintenanceMode') === 'true') {
+                    handleMaintenanceMode(true, 'Технический перерыв');
+                }
+            }, 1000);
             
             // Загрузка данных
             // Баланс загружается из БД через WebSocket, не из localStorage!
