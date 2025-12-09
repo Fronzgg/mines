@@ -217,6 +217,25 @@ function initDatabase() {
                 console.log('✅ Таблица daily_bonuses создана');
             }
         });
+        
+        // Таблица реферальной системы
+        db.run(`CREATE TABLE IF NOT EXISTS referrals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            referrer_id INTEGER,
+            referred_id INTEGER,
+            referrer_ip TEXT,
+            referred_ip TEXT,
+            reward_given INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (referrer_id) REFERENCES users(telegram_id),
+            FOREIGN KEY (referred_id) REFERENCES users(telegram_id)
+        )`, (err) => {
+            if (err) {
+                console.error('Ошибка создания таблицы referrals:', err);
+            } else {
+                console.log('✅ Таблица referrals создана');
+            }
+        });
 
         // Таблица транзакций (пополнения/выводы)
         db.run(`CREATE TABLE IF NOT EXISTS transactions (
@@ -350,6 +369,8 @@ wss.on('connection', (ws) => {
 
 // Обработка WebSocket сообщений
 function handleWebSocketMessage(ws, data) {
+    console.log(`📨 WebSocket сообщение: type=${data.type}, user=${data.telegram_id || 'unknown'}`);
+    
     switch (data.type) {
         case 'auth':
             handleAuth(ws, data);
@@ -488,16 +509,148 @@ function handleUpdateBalance(ws, data) {
 // Сохранение результата игры
 function handleGameResult(ws, data) {
     const { telegram_id, game_type, bet_amount, win_amount, multiplier } = data;
+    console.log(`🎮 Результат игры: user=${telegram_id}, game=${game_type}, bet=${bet_amount}, win=${win_amount}, mult=${multiplier}`);
 
     db.run(`INSERT INTO game_history (user_id, game_type, bet_amount, win_amount, multiplier) 
             VALUES (?, ?, ?, ?, ?)`,
         [telegram_id, game_type, bet_amount, win_amount, multiplier],
         (err) => {
             if (err) {
-                console.error('Ошибка сохранения истории игры:', err);
+                console.error('❌ Ошибка сохранения истории игры:', err);
+            } else {
+                console.log(`✅ История игры сохранена, запускаем FN-Live проверку...`);
+                // Проверяем FN-Live после каждой игры
+                checkFNLiveViolations(telegram_id, win_amount);
             }
         }
     );
+}
+
+// FN-Live автоматические проверки
+function checkFNLiveViolations(telegram_id, lastWinAmount) {
+    console.log(`🛡️ FN-Live проверка: user=${telegram_id}, lastWin=${lastWinAmount}`);
+    
+    // Проверяем баланс пользователя
+    db.get('SELECT balance, is_founder FROM users WHERE telegram_id = ?', [telegram_id], (err, user) => {
+        if (err || !user) {
+            console.log(`❌ Пользователь не найден: ${telegram_id}`);
+            return;
+        }
+        
+        // Пропускаем проверки ТОЛЬКО для основателя @Fronz (ID: 1908053913)
+        // ID 12345 (тестовый) будет проверяться!
+        if (user.is_founder && telegram_id === 1908053913) {
+            console.log(`👑 Основатель @Fronz (${telegram_id}) - пропускаем проверки`);
+            return;
+        }
+        
+        console.log(`💰 Баланс пользователя ${telegram_id}: ${user.balance}`);
+        
+        // ═══════════════════════════════════════════════════════════
+        // ПРОВЕРКА 1: Баланс > 100,000 (МГНОВЕННЫЙ БАН)
+        // ═══════════════════════════════════════════════════════════
+        if (user.balance > 100000) {
+            console.log(`🚨 НАРУШЕНИЕ: Баланс ${user.balance} > 100,000`);
+            autoBlockUser(telegram_id, 'Баланс превысил 100,000 FCOINS - подозрение на эксплоит', 600);
+            return;
+        }
+        
+        // ═══════════════════════════════════════════════════════════
+        // ПРОВЕРКА 4: Подозрительный винрейт (последние 10 игр)
+        // ═══════════════════════════════════════════════════════════
+        db.all(`SELECT win_amount, bet_amount, multiplier
+                FROM game_history 
+                WHERE user_id = ? 
+                ORDER BY created_at DESC 
+                LIMIT 10`,
+            [telegram_id], (err, games) => {
+                if (err || !games || games.length < 5) return;
+                
+                const wins = games.filter(g => g.win_amount > g.bet_amount).length;
+                const winRate = (wins / games.length) * 100;
+                const totalProfit = games.reduce((sum, g) => sum + (g.win_amount - g.bet_amount), 0);
+                
+                console.log(`🎲 Последние ${games.length} игр: ${wins} побед (${winRate.toFixed(0)}% винрейт), прибыль: ${totalProfit}`);
+                
+                // Если 8+ побед из 10 игр = БАН
+                if (games.length >= 10 && wins >= 8) {
+                    console.log(`🚨 НАРУШЕНИЕ: ${wins}/10 побед (${winRate.toFixed(0)}% винрейт)`);
+                    autoBlockUser(telegram_id, 'Аномальный винрейт - подозрение на читы', 600);
+                    return;
+                }
+                
+                // Если 5+ побед подряд с ОГРОМНЫМИ ставками = БАН
+                const recentGames = games.slice(0, 5);
+                const allRecentWins = recentGames.every(g => g.win_amount > g.bet_amount);
+                const avgBet = recentGames.reduce((sum, g) => sum + g.bet_amount, 0) / recentGames.length;
+                
+                if (allRecentWins && avgBet > 5000) {
+                    console.log(`🚨 НАРУШЕНИЕ: 5 побед подряд с огромными ставками (средняя ставка: ${avgBet.toFixed(0)})`);
+                    autoBlockUser(telegram_id, 'Подозрительная серия побед с огромными ставками', 600);
+                    return;
+                }
+            }
+        );
+        
+        // ═══════════════════════════════════════════════════════════
+        // ПРОВЕРКА 5: Огромные ставки с идеальным угадыванием (Мины)
+        // ═══════════════════════════════════════════════════════════
+        db.all(`SELECT bet_amount, win_amount, multiplier, game_type
+                FROM game_history 
+                WHERE user_id = ? AND game_type = 'mines'
+                ORDER BY created_at DESC 
+                LIMIT 5`,
+            [telegram_id], (err, minesGames) => {
+                if (err || !minesGames || minesGames.length < 3) return;
+                
+                const allWins = minesGames.every(g => g.win_amount > g.bet_amount);
+                const avgMultiplier = minesGames.reduce((sum, g) => sum + g.multiplier, 0) / minesGames.length;
+                const avgBet = minesGames.reduce((sum, g) => sum + g.bet_amount, 0) / minesGames.length;
+                
+                console.log(`💣 Последние ${minesGames.length} игр в Мины: все победы=${allWins}, средний множитель=${avgMultiplier.toFixed(2)}x, средняя ставка=${avgBet.toFixed(0)}`);
+                
+                // Если все выигрывает в Мины с большими ставками и высокими множителями = БАН
+                if (allWins && avgMultiplier > 3 && avgBet > 500) {
+                    console.log(`🚨 НАРУШЕНИЕ: Идеальное угадывание в Минах (${avgMultiplier.toFixed(2)}x средний множитель)`);
+                    autoBlockUser(telegram_id, 'Невозможное угадывание мин - подозрение на эксплоит', 600);
+                    return;
+                }
+            }
+        );
+    });
+}
+
+// Автоматическая блокировка пользователя
+function autoBlockUser(telegram_id, reason, durationMinutes) {
+    const blockedUntil = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
+    
+    // Проверяем что пользователь не основатель
+    db.get('SELECT is_founder FROM users WHERE telegram_id = ?', [telegram_id], (err, user) => {
+        if (err || !user || user.is_founder) return; // Не блокируем основателя
+        
+        // Сохраняем блокировку
+        db.run(`INSERT INTO fn_live_blocks (user_id, reason, blocked_until) VALUES (?, ?, ?)`,
+            [telegram_id, reason, blockedUntil], (err) => {
+                if (err) {
+                    console.error('Ошибка автоблокировки:', err);
+                    return;
+                }
+                
+                console.log(`🛡️ FN-Live автоблокировка: user=${telegram_id}, reason="${reason}"`);
+                
+                // Отправляем блокировку пользователю
+                const userWs = clients.get(telegram_id);
+                if (userWs) {
+                    userWs.send(JSON.stringify({
+                        type: 'fn_live_block',
+                        reason: reason,
+                        blockedUntil: blockedUntil,
+                        duration: durationMinutes
+                    }));
+                }
+            }
+        );
+    });
 }
 
 // Использование промокода
@@ -769,6 +922,81 @@ app.post('/api/admin/fn-live-unblock', (req, res) => {
     });
 });
 
+// Админ: Заморозить баланс пользователя
+app.post('/api/admin/freeze-balance', (req, res) => {
+    const { admin_id, user_id } = req.body;
+    console.log(`❄️ Запрос заморозки баланса: admin=${admin_id}, user=${user_id}`);
+
+    db.get('SELECT is_founder FROM users WHERE telegram_id = ?', [admin_id], (err, user) => {
+        if (err || !user || !user.is_founder) {
+            console.error('❌ Доступ запрещен:', err || 'не основатель');
+            res.status(403).json({ error: 'Доступ запрещен' });
+            return;
+        }
+
+        // Блокируем пользователя на 10 часов (600 минут)
+        const blockedUntil = new Date(Date.now() + 600 * 60 * 1000).toISOString();
+        
+        db.run(`INSERT INTO fn_live_blocks (user_id, reason, blocked_until) VALUES (?, ?, ?)`,
+            [user_id, 'Баланс заморожен администратором', blockedUntil],
+            (err) => {
+                if (err) {
+                    console.error('❌ Ошибка заморозки:', err);
+                    res.status(500).json({ error: 'Ошибка заморозки баланса' });
+                    return;
+                }
+
+                console.log(`✅ Баланс заморожен для user=${user_id}`);
+
+                // Уведомляем пользователя
+                const userWs = clients.get(user_id);
+                if (userWs) {
+                    userWs.send(JSON.stringify({
+                        type: 'balance_frozen'
+                    }));
+                }
+
+                res.json({ success: true, message: 'Баланс заморожен' });
+            }
+        );
+    });
+});
+
+// Админ: Разморозить баланс пользователя
+app.post('/api/admin/unfreeze-balance', (req, res) => {
+    const { admin_id, user_id } = req.body;
+    console.log(`🔥 Запрос разморозки баланса: admin=${admin_id}, user=${user_id}`);
+
+    db.get('SELECT is_founder FROM users WHERE telegram_id = ?', [admin_id], (err, user) => {
+        if (err || !user || !user.is_founder) {
+            console.error('❌ Доступ запрещен:', err || 'не основатель');
+            res.status(403).json({ error: 'Доступ запрещен' });
+            return;
+        }
+
+        // Удаляем все блокировки пользователя
+        db.run(`DELETE FROM fn_live_blocks WHERE user_id = ?`, [user_id], (err) => {
+            if (err) {
+                console.error('❌ Ошибка разморозки:', err);
+                res.status(500).json({ error: 'Ошибка разморозки баланса' });
+                return;
+            }
+
+            console.log(`✅ Баланс разморожен для user=${user_id}`);
+
+            // Уведомляем пользователя
+            const userWs = clients.get(user_id);
+            if (userWs) {
+                userWs.send(JSON.stringify({
+                    type: 'balance_unfrozen'
+                }));
+            }
+
+            res.json({ success: true, message: 'Баланс разморожен' });
+        });
+    });
+});
+
 // Админ: Технический перерыв (отключение всех игр)
 app.post('/api/admin/maintenance', (req, res) => {
     const { admin_id, enabled, message } = req.body;
@@ -838,7 +1066,7 @@ app.post('/api/daily-bonus', (req, res) => {
             }
 
             // Выдаем бонус
-            const bonusAmount = 10000;
+            const bonusAmount = 100;
             
             db.run(`INSERT INTO daily_bonuses (user_id, amount) VALUES (?, ?)`,
                 [telegram_id, bonusAmount], (err) => {
@@ -913,6 +1141,192 @@ app.get('/api/daily-bonus/check/:telegram_id', (req, res) => {
             }
         }
     );
+});
+
+// Генерация уникального реферального кода
+function generateReferralCode(telegram_id) {
+    // Создаем код из telegram_id + случайные символы
+    const base = telegram_id.toString(36).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
+    return (base + random).substring(0, 8);
+}
+
+// API: Получить реферальный код пользователя
+app.get('/api/referral/code/:telegram_id', (req, res) => {
+    const telegram_id = parseInt(req.params.telegram_id);
+    console.log(`🔗 Запрос реферального кода для user=${telegram_id}`);
+    
+    db.get('SELECT username FROM users WHERE telegram_id = ?', [telegram_id], (err, user) => {
+        if (err || !user) {
+            res.status(404).json({ error: 'Пользователь не найден' });
+            return;
+        }
+        
+        // Генерируем код на основе telegram_id (всегда одинаковый для пользователя)
+        const code = generateReferralCode(telegram_id);
+        console.log(`✅ Реферальный код: ${code}`);
+        
+        res.json({ code: code });
+    });
+});
+
+// API: Получить статистику рефералов
+app.get('/api/referral/stats/:telegram_id', (req, res) => {
+    const telegram_id = parseInt(req.params.telegram_id);
+    console.log(`📊 Запрос статистики рефералов для user=${telegram_id}`);
+    
+    db.get(`SELECT COUNT(*) as count, SUM(reward_given) as earnings 
+            FROM referrals 
+            WHERE referrer_id = ?`,
+        [telegram_id], (err, stats) => {
+            if (err) {
+                console.error('❌ Ошибка получения статистики:', err);
+                res.status(500).json({ error: 'Ошибка БД' });
+                return;
+            }
+            
+            console.log(`✅ Рефералов: ${stats.count}, заработано: ${stats.earnings || 0}`);
+            res.json({
+                count: stats.count || 0,
+                earnings: stats.earnings || 0
+            });
+        }
+    );
+});
+
+// API: Применить реферальный код
+app.post('/api/referral/apply', (req, res) => {
+    const { telegram_id, code, ip } = req.body;
+    console.log(`🎁 Применение реф-кода: user=${telegram_id}, code=${code}, ip=${ip}`);
+    
+    // Проверяем, не использовал ли пользователь уже реф-код
+    db.get('SELECT * FROM referrals WHERE referred_id = ?', [telegram_id], (err, existing) => {
+        if (err) {
+            console.error('❌ Ошибка проверки:', err);
+            res.status(500).json({ error: 'Ошибка БД' });
+            return;
+        }
+        
+        if (existing) {
+            console.log('❌ Пользователь уже использовал реф-код');
+            res.json({ success: false, error: 'Вы уже использовали реферальный код!' });
+            return;
+        }
+        
+        // Проверяем IP (защита от абуза)
+        db.get('SELECT * FROM referrals WHERE referred_ip = ?', [ip], (err, ipCheck) => {
+            if (err) {
+                console.error('❌ Ошибка проверки IP:', err);
+                res.status(500).json({ error: 'Ошибка БД' });
+                return;
+            }
+            
+            if (ipCheck) {
+                console.log('❌ IP уже использовался');
+                res.json({ success: false, error: 'С этого IP уже использовали реферальный код!' });
+                return;
+            }
+            
+            // Находим владельца кода
+            db.all('SELECT telegram_id FROM users', (err, users) => {
+                if (err) {
+                    console.error('❌ Ошибка получения пользователей:', err);
+                    res.status(500).json({ error: 'Ошибка БД' });
+                    return;
+                }
+                
+                let referrerId = null;
+                for (const user of users) {
+                    if (generateReferralCode(user.telegram_id) === code.toUpperCase()) {
+                        referrerId = user.telegram_id;
+                        break;
+                    }
+                }
+                
+                if (!referrerId) {
+                    console.log('❌ Неверный реферальный код');
+                    res.json({ success: false, error: 'Неверный реферальный код!' });
+                    return;
+                }
+                
+                if (referrerId === telegram_id) {
+                    console.log('❌ Нельзя использовать свой код');
+                    res.json({ success: false, error: 'Нельзя использовать свой реферальный код!' });
+                    return;
+                }
+                
+                console.log(`✅ Найден реферер: ${referrerId}`);
+                
+                // Начисляем бонусы
+                db.run('UPDATE users SET balance = balance + 50 WHERE telegram_id = ?', [telegram_id], (err) => {
+                    if (err) {
+                        console.error('❌ Ошибка начисления бонуса рефералу:', err);
+                        res.status(500).json({ error: 'Ошибка начисления' });
+                        return;
+                    }
+                    
+                    db.run('UPDATE users SET balance = balance + 100 WHERE telegram_id = ?', [referrerId], (err) => {
+                        if (err) {
+                            console.error('❌ Ошибка начисления бонуса рефереру:', err);
+                            res.status(500).json({ error: 'Ошибка начисления' });
+                            return;
+                        }
+                        
+                        // Сохраняем реферала
+                        db.run(`INSERT INTO referrals (referrer_id, referred_id, referrer_ip, referred_ip, reward_given) 
+                                VALUES (?, ?, ?, ?, 100)`,
+                            [referrerId, telegram_id, ip, ip], (err) => {
+                                if (err) {
+                                    console.error('❌ Ошибка сохранения реферала:', err);
+                                    res.status(500).json({ error: 'Ошибка сохранения' });
+                                    return;
+                                }
+                                
+                                console.log(`✅ Реферал добавлен! Реферер: ${referrerId}, Реферал: ${telegram_id}`);
+                                
+                                // Уведомляем обоих пользователей
+                                const referredWs = clients.get(telegram_id);
+                                if (referredWs) {
+                                    db.get('SELECT balance FROM users WHERE telegram_id = ?', [telegram_id], (err, user) => {
+                                        if (!err && user) {
+                                            referredWs.send(JSON.stringify({
+                                                type: 'balance_changed',
+                                                new_balance: user.balance,
+                                                change: 50
+                                            }));
+                                        }
+                                    });
+                                }
+                                
+                                const referrerWs = clients.get(referrerId);
+                                if (referrerWs) {
+                                    db.get('SELECT balance FROM users WHERE telegram_id = ?', [referrerId], (err, user) => {
+                                        if (!err && user) {
+                                            referrerWs.send(JSON.stringify({
+                                                type: 'balance_changed',
+                                                new_balance: user.balance,
+                                                change: 100
+                                            }));
+                                            referrerWs.send(JSON.stringify({
+                                                type: 'notification',
+                                                message: 'Новый реферал! Вы получили +100 FCOINS'
+                                            }));
+                                        }
+                                    });
+                                }
+                                
+                                res.json({ 
+                                    success: true, 
+                                    message: 'Реферальный код применен! Вы получили +50 FCOINS',
+                                    newBalance: 0 // Будет обновлено через WebSocket
+                                });
+                            }
+                        );
+                    });
+                });
+            });
+        });
+    });
 });
 
 // Админ: Переключение FN-Live системы
@@ -1419,13 +1833,16 @@ app.post('/api/roulette/bet', (req, res) => {
 // API: Получить историю транзакций пользователя
 app.get('/api/transactions/:telegram_id', (req, res) => {
     const telegram_id = parseInt(req.params.telegram_id);
+    console.log(`📊 Запрос транзакций для пользователя ${telegram_id}`);
     
     db.all(`SELECT * FROM transactions WHERE user_id = ? ORDER BY created_at DESC LIMIT 50`,
         [telegram_id], (err, transactions) => {
             if (err) {
-                res.status(500).json({ error: 'Ошибка БД' });
+                console.error('❌ Ошибка получения транзакций:', err);
+                res.status(500).json({ error: 'Ошибка БД', details: err.message });
                 return;
             }
+            console.log(`✅ Найдено транзакций: ${transactions.length}`);
             res.json(transactions);
         }
     );
@@ -1434,39 +1851,99 @@ app.get('/api/transactions/:telegram_id', (req, res) => {
 // Админ: Добавить транзакцию пользователю
 app.post('/api/admin/add-transaction', (req, res) => {
     const { admin_id, user_id, type, amount } = req.body;
+    console.log(`💰 Запрос добавления транзакции: admin=${admin_id}, user=${user_id}, type=${type}, amount=${amount}`);
     
     db.get('SELECT is_founder FROM users WHERE telegram_id = ?', [admin_id], (err, user) => {
         if (err || !user || !user.is_founder) {
+            console.error('❌ Доступ запрещен:', err || 'не основатель');
             res.status(403).json({ error: 'Доступ запрещен' });
             return;
         }
         
-        // Добавляем транзакцию
-        db.run(`INSERT INTO transactions (user_id, type, amount, status) VALUES (?, ?, ?, 'completed')`,
-            [user_id, type, amount], function(err) {
+        console.log('✅ Права проверены, добавляем транзакцию...');
+        
+        // Если пополнение - начисляем баланс
+        if (type === 'deposit') {
+            db.run(`UPDATE users SET balance = balance + ? WHERE telegram_id = ?`, [amount, user_id], (err) => {
                 if (err) {
-                    res.status(500).json({ error: 'Ошибка добавления транзакции' });
+                    console.error('❌ Ошибка начисления баланса:', err);
+                    res.status(500).json({ error: 'Ошибка начисления баланса', details: err.message });
                     return;
                 }
                 
-                res.json({ success: true, transactionId: this.lastID });
-            }
-        );
+                console.log(`✅ Баланс начислен: +${amount}`);
+                
+                // Добавляем транзакцию
+                db.run(`INSERT INTO transactions (user_id, type, amount, status) VALUES (?, ?, ?, 'completed')`,
+                    [user_id, type, amount], function(err) {
+                        if (err) {
+                            console.error('❌ Ошибка добавления транзакции:', err);
+                            res.status(500).json({ error: 'Ошибка добавления транзакции', details: err.message });
+                            return;
+                        }
+                        
+                        console.log(`✅ Транзакция добавлена, ID: ${this.lastID}`);
+                        
+                        // Уведомляем пользователя через WebSocket
+                        const userWs = clients.get(user_id);
+                        if (userWs) {
+                            db.get('SELECT balance FROM users WHERE telegram_id = ?', [user_id], (err, updatedUser) => {
+                                if (!err && updatedUser) {
+                                    userWs.send(JSON.stringify({
+                                        type: 'balance_changed',
+                                        new_balance: updatedUser.balance,
+                                        change: amount
+                                    }));
+                                }
+                            });
+                        }
+                        
+                        res.json({ success: true, transactionId: this.lastID });
+                    }
+                );
+            });
+        } else {
+            // Если вывод - просто добавляем в историю (баланс уже списан при заявке)
+            db.run(`INSERT INTO transactions (user_id, type, amount, status) VALUES (?, ?, ?, 'completed')`,
+                [user_id, type, amount], function(err) {
+                    if (err) {
+                        console.error('❌ Ошибка добавления транзакции:', err);
+                        res.status(500).json({ error: 'Ошибка добавления транзакции', details: err.message });
+                        return;
+                    }
+                    
+                    console.log(`✅ Транзакция добавлена, ID: ${this.lastID}`);
+                    res.json({ success: true, transactionId: this.lastID });
+                }
+            );
+        }
     });
 });
 
 // API: Заявка на вывод средств
 app.post('/api/withdraw-request', (req, res) => {
     const { telegram_id, amount } = req.body;
+    console.log(`💸 Запрос вывода: user=${telegram_id}, amount=${amount}`);
     
     // Проверяем баланс
     db.get('SELECT balance FROM users WHERE telegram_id = ?', [telegram_id], (err, user) => {
         if (err || !user) {
+            console.error('❌ Пользователь не найден:', telegram_id);
             res.status(404).json({ error: 'Пользователь не найден' });
             return;
         }
         
+        console.log(`💰 Баланс пользователя: ${user.balance}`);
+        
+        // Проверяем минимальную сумму вывода
+        if (amount < 3000) {
+            console.log('❌ Минимальная сумма вывода: 3000 FCOINS');
+            res.json({ success: false, error: 'Минимальная сумма вывода: 3000 FCOINS' });
+            return;
+        }
+        
         if (user.balance < amount) {
+            console.log('❌ Недостаточно средств');
             res.json({ success: false, error: 'Недостаточно средств' });
             return;
         }
@@ -1474,17 +1951,23 @@ app.post('/api/withdraw-request', (req, res) => {
         // Списываем баланс
         db.run('UPDATE users SET balance = balance - ? WHERE telegram_id = ?', [amount, telegram_id], (err) => {
             if (err) {
+                console.error('❌ Ошибка списания:', err);
                 res.status(500).json({ error: 'Ошибка списания средств' });
                 return;
             }
+            
+            console.log('✅ Баланс списан');
             
             // Добавляем транзакцию со статусом "pending"
             db.run(`INSERT INTO transactions (user_id, type, amount, status) VALUES (?, 'withdrawal', ?, 'pending')`,
                 [telegram_id, amount], function(err) {
                     if (err) {
-                        res.status(500).json({ error: 'Ошибка создания заявки' });
+                        console.error('❌ Ошибка создания транзакции:', err);
+                        res.status(500).json({ error: 'Ошибка создания заявки', details: err.message });
                         return;
                     }
+                    
+                    console.log(`✅ Транзакция создана, ID: ${this.lastID}`);
                     
                     // Уведомляем пользователя
                     const userWs = clients.get(telegram_id);
@@ -1567,12 +2050,12 @@ app.post('/api/admin/notify-update', (req, res) => {
     });
 });
 
-const PORT = process.env.PORT || 3000;
-
 // Главная страница (должна быть в конце после всех API роутов)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
+
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
     console.log(`📱 Откройте http://localhost:${PORT}`);

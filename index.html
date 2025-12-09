@@ -864,12 +864,7 @@
         .fn-live-icon {
             font-size: 80px;
             margin-bottom: 20px;
-            animation: fnLiveRotate 3s linear infinite;
-        }
-
-        @keyframes fnLiveRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            /* Убрали вращение - теперь статичная иконка */
         }
 
         .fn-live-message {
@@ -1314,6 +1309,16 @@
             <button class="admin-btn" id="fn-live-unblock-btn" style="background: linear-gradient(to right, #4caf50, #2e7d32);">
                 <i class="fas fa-unlock"></i> Снять блокировку
             </button>
+            
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--light-gray);">
+            
+            <h4 style="margin-bottom: 15px; color: var(--dark);">Заморозка баланса</h4>
+            <button class="admin-btn" id="fn-live-freeze-btn" style="background: linear-gradient(to right, #2196f3, #1976d2);">
+                <i class="fas fa-snowflake"></i> Заморозить баланс
+            </button>
+            <button class="admin-btn" id="fn-live-unfreeze-btn" style="background: linear-gradient(to right, #ff9800, #f57c00);">
+                <i class="fas fa-fire"></i> Разморозить баланс
+            </button>
         </div>
         
         <div class="admin-section">
@@ -1359,7 +1364,7 @@
         <div class="fn-live-content">
             <div class="fn-live-title">ИГРА ОТМЕНЕНА</div>
             <div class="fn-live-box">
-                <div class="fn-live-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="fn-live-icon"><i class="fas fa-ban"></i></div>
                 <div class="fn-live-message">
                     Система FN-Live обнаружила подозрительную активность
                 </div>
@@ -1444,9 +1449,10 @@
                 <button class="theme-toggle" id="theme-toggle">
                     <i class="fas fa-moon"></i>
                 </button>
-                <div class="user-balance">
+                <div class="user-balance" id="balance-container" title="">
                     <i class="fas fa-coins fcoins"></i>
                     <span id="balance">10 000</span> FCOINS
+                    <i class="fas fa-snowflake" id="frozen-icon" style="display: none; margin-left: 8px; color: #64b5f6; animation: pulse 2s infinite;"></i>
                 </div>
             </div>
         </header>
@@ -1516,10 +1522,66 @@
             <div class="bonus-card">
                 <h3>Ежедневный бонус</h3>
                 <p>Заходи каждый день, чтобы получить награду!</p>
-                <div class="bonus-amount">+10,000 FCOINS</div>
+                <div class="bonus-amount">+100 FCOINS</div>
                 <button class="btn btn-primary" id="daily-bonus-btn">
                     <i class="fas fa-gift"></i> Получить бонус
                 </button>
+            </div>
+            
+            <div class="bonus-card" style="margin-top: 20px;">
+                <h3>Реферальная система</h3>
+                <p>Приглашай друзей и получай награды!</p>
+                
+                <div style="background: var(--light-gray); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="color: var(--gray); font-size: 14px;">Твой реферальный код:</span>
+                        <button class="bet-btn" id="copy-ref-code-btn" style="padding: 5px 10px; font-size: 12px;">
+                            <i class="fas fa-copy"></i> Копировать
+                        </button>
+                    </div>
+                    <div id="referral-code" style="font-size: 24px; font-weight: bold; color: var(--primary); text-align: center; letter-spacing: 2px;">
+                        LOADING...
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 10px; color: white; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-around; text-align: center;">
+                        <div>
+                            <div style="font-size: 28px; font-weight: bold;">+50</div>
+                            <div style="font-size: 12px; opacity: 0.9;">Реферал получает</div>
+                        </div>
+                        <div style="border-left: 1px solid rgba(255,255,255,0.3);"></div>
+                        <div>
+                            <div style="font-size: 28px; font-weight: bold;">+100</div>
+                            <div style="font-size: 12px; opacity: 0.9;">Ты получаешь</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <i class="fas fa-users" style="color: var(--primary);"></i>
+                        <span style="color: var(--gray);">Приглашено рефералов:</span>
+                        <strong id="referral-count" style="color: var(--primary);">0</strong>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-coins" style="color: var(--warning);"></i>
+                        <span style="color: var(--gray);">Заработано с рефералов:</span>
+                        <strong id="referral-earnings" style="color: var(--warning);">0 FCOINS</strong>
+                    </div>
+                </div>
+                
+                <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--light-gray);">
+                
+                <h4 style="margin-bottom: 10px; color: var(--dark);">Ввести реферальный код</h4>
+                <p style="font-size: 13px; color: var(--gray); margin-bottom: 10px;">Введи код друга и получи +50 FCOINS!</p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="referral-code-input" placeholder="Введи код" style="flex: 1; padding: 12px; border: 2px solid var(--light-gray); border-radius: 10px; font-size: 16px; text-transform: uppercase;" maxlength="8">
+                    <button class="btn btn-primary" id="apply-referral-btn" style="padding: 12px 20px;">
+                        <i class="fas fa-check"></i> Применить
+                    </button>
+                </div>
+                <div id="referral-status" style="margin-top: 10px; font-size: 13px; text-align: center;"></div>
             </div>
 
             <div class="promo-section">
@@ -2036,6 +2098,11 @@
 
         // Начало игры Мины
         function startGame() {
+            // Проверка заморозки баланса
+            if (checkBalanceFrozen()) {
+                return;
+            }
+            
             if (gameActive) {
                 // Сброс игры
                 resetGame();
@@ -2212,11 +2279,17 @@
                 });
                 
                 showNotification(`Победа! Вы выиграли ${winAmount} FCOINS (${multiplier.toFixed(2)}x)`, 'success');
+                
+                // Отправляем результат на сервер для FN-Live проверки
+                sendGameResult('mines', currentBet, winAmount, multiplier);
             } else {
                 playerStats.totalProfit -= currentBet;
                 totalProfitElement.textContent = '+' + playerStats.totalProfit.toLocaleString();
                 
                 showNotification(`Вы наткнулись на мину! Потеряно ${currentBet} FCOINS.`, 'error');
+                
+                // Отправляем результат на сервер (проигрыш)
+                sendGameResult('mines', currentBet, 0, 0);
             }
             
             updateBalance();
@@ -2372,12 +2445,18 @@
                 totalProfitElement.textContent = '+' + playerStats.totalProfit.toLocaleString();
                 
                 showNotification(`Вы забрали ${winAmount} FCOINS (${cashoutMultiplier.toFixed(2)}x)!`, 'success');
+                
+                // Отправляем результат на сервер для FN-Live проверки
+                sendGameResult('crash', crashBet, winAmount, cashoutMultiplier);
             } else if (!isWin) {
                 // Ракета взорвалась
                 rocketElement.innerHTML = '💥';
                 playerStats.totalProfit -= crashBet;
                 totalProfitElement.textContent = '+' + playerStats.totalProfit.toLocaleString();
                 showNotification(`Ракета взорвалась на ${crashMultiplier.toFixed(2)}x! Вы проиграли ${crashBet} FCOINS.`, 'error');
+                
+                // Отправляем результат на сервер (проигрыш)
+                sendGameResult('crash', crashBet, 0, 0);
             }
             
             updateBalance();
@@ -2400,6 +2479,11 @@
 
         // Игра Рулетка - крутить (улучшенная версия)
         function spinRoulette() {
+            // Проверка заморозки баланса
+            if (checkBalanceFrozen()) {
+                return;
+            }
+            
             if (rouletteSpinning) return;
             
             if (rouletteBet > balance) {
@@ -2458,10 +2542,16 @@
                         totalProfitElement.textContent = '+' + playerStats.totalProfit.toLocaleString();
                         
                         showNotification(`Выигрыш! Выпало ${result} (${isRed ? 'красное' : isBlack ? 'черное' : 'зеро'}). Вы выиграли ${winAmount} FCOINS!`, 'success');
+                        
+                        // Отправляем результат на сервер для FN-Live проверки
+                        sendGameResult('roulette', rouletteBet, winAmount, winMultiplier);
                     } else {
                         playerStats.totalProfit -= rouletteBet;
                         totalProfitElement.textContent = '+' + playerStats.totalProfit.toLocaleString();
                         showNotification(`Проигрыш! Выпало ${result} (${isRed ? 'красное' : isBlack ? 'черное' : 'зеро'}). Вы проиграли ${rouletteBet} FCOINS.`, 'error');
+                        
+                        // Отправляем результат на сервер (проигрыш)
+                        sendGameResult('roulette', rouletteBet, 0, 0);
                     }
                     
                     updateBalance();
@@ -2481,6 +2571,11 @@
 
         // Игра Слоты - крутить
         function spinSlots() {
+            // Проверка заморозки баланса
+            if (checkBalanceFrozen()) {
+                return;
+            }
+            
             if (slotsSpinning) return;
             
             if (slotsBet > balance) {
@@ -2550,12 +2645,18 @@
                         document.getElementById('slots-result').textContent = `🎉 ВЫИГРЫШ! x${payout}`;
                         document.getElementById('slots-result').style.color = 'var(--success)';
                         showNotification(`Джекпот! Вы выиграли ${winAmount} FCOINS (x${payout})!`, 'success');
+                        
+                        // Отправляем результат на сервер для FN-Live проверки
+                        sendGameResult('slots', slotsBet, winAmount, payout);
                     } else {
                         playerStats.totalProfit -= slotsBet;
                         totalProfitElement.textContent = '+' + playerStats.totalProfit.toLocaleString();
                         document.getElementById('slots-result').textContent = 'Попробуйте еще раз';
                         document.getElementById('slots-result').style.color = 'var(--gray)';
                         showNotification(`Не повезло. Вы проиграли ${slotsBet} FCOINS.`, 'error');
+                        
+                        // Отправляем результат на сервер (проигрыш)
+                        sendGameResult('slots', slotsBet, 0, 0);
                     }
                     
                     updateBalance();
@@ -2585,6 +2686,21 @@
                     type: 'update_balance',
                     telegram_id: currentUser.telegramId,
                     balance: balance
+                });
+            }
+        }
+        
+        // Отправка результата игры на сервер для FN-Live проверки
+        function sendGameResult(gameType, betAmount, winAmount, multiplier) {
+            if (currentUser.telegramId && isConnected) {
+                console.log(`📊 Отправка результата игры: ${gameType}, bet=${betAmount}, win=${winAmount}, mult=${multiplier}`);
+                sendToServer({
+                    type: 'game_result',
+                    telegram_id: currentUser.telegramId,
+                    game_type: gameType,
+                    bet_amount: betAmount,
+                    win_amount: winAmount,
+                    multiplier: multiplier
                 });
             }
         }
@@ -2720,6 +2836,15 @@
                 case 'fn_live_block':
                     showFNLiveBlock(data.reason, data.blockedUntil, data.duration);
                     break;
+                case 'balance_frozen':
+                    showBalanceFrozen(true);
+                    showFNLiveBlock('Баланс заморожен администратором', null, 600);
+                    showNotification('Ваш баланс был заморожен by FN-Live', 'error');
+                    break;
+                case 'balance_unfrozen':
+                    showBalanceFrozen(false);
+                    showNotification('Ваш баланс разморожен', 'success');
+                    break;
                 case 'fn_live_unblock':
                     hideFNLiveBlock();
                     showNotification('Блокировка FN-Live снята!', 'success');
@@ -2827,12 +2952,48 @@
             if (user.fnLiveBlock && user.fnLiveBlock.blocked) {
                 currentUser.fnLiveBlock = user.fnLiveBlock;
                 showFNLiveBlock(user.fnLiveBlock.reason, user.fnLiveBlock.blockedUntil);
+                showBalanceFrozen(true);
             } else {
                 currentUser.fnLiveBlock = { blocked: false };
+                showBalanceFrozen(false);
             }
             
             updateFNLiveStatus();
             showNotification(`Добро пожаловать, ${currentUser.name}!`, 'success');
+        }
+        
+        // Показать/скрыть заморозку баланса
+        function showBalanceFrozen(frozen) {
+            const balanceContainer = document.getElementById('balance-container');
+            const balanceElement = document.getElementById('balance');
+            const frozenIcon = document.getElementById('frozen-icon');
+            
+            if (frozen) {
+                balanceElement.style.color = '#64b5f6'; // Синий цвет
+                frozenIcon.style.display = 'inline';
+                balanceContainer.title = 'Ваш баланс заморожен by FN-Live';
+                balanceContainer.style.cursor = 'help';
+                
+                // Сохраняем статус заморозки
+                currentUser.balanceFrozen = true;
+            } else {
+                balanceElement.style.color = '';
+                frozenIcon.style.display = 'none';
+                balanceContainer.title = '';
+                balanceContainer.style.cursor = '';
+                
+                // Убираем статус заморозки
+                currentUser.balanceFrozen = false;
+            }
+        }
+        
+        // Проверка заморозки баланса перед действием
+        function checkBalanceFrozen() {
+            if (currentUser.balanceFrozen || (currentUser.fnLiveBlock && currentUser.fnLiveBlock.blocked)) {
+                showNotification('⚠️ Ваш баланс заморожен by FN-Live. Игры и вывод недоступны.', 'error');
+                return true;
+            }
+            return false;
         }
         
         // Глобальные переменные для онлайн игр и FN-Live
@@ -2871,30 +3032,28 @@
             const overlay = document.getElementById('fn-live-overlay');
             const reasonElement = document.getElementById('fn-live-reason');
             
+            console.log(`🚨 Показываем FN-Live блокировку: ${reason}`);
+            
             // Сохраняем информацию о блокировке
             currentUser.fnLiveBlock = {
                 blocked: true,
                 reason: reason,
                 blockedUntil: blockedUntil,
-                duration: duration,
-                shown: localStorage.getItem('fnLiveBlockShown') === 'true'
+                duration: duration
             };
             
-            // Показываем overlay только если еще не показывали
-            if (!currentUser.fnLiveBlock.shown) {
-                reasonElement.textContent = reason;
-                overlay.classList.add('active');
-                localStorage.setItem('fnLiveBlockShown', 'true');
-                
-                // Через 5 секунд скрываем overlay и перекидываем на профиль
-                setTimeout(() => {
-                    overlay.classList.remove('active');
-                    switchToProfile();
-                }, 5000);
-            } else {
-                // Если уже показывали, сразу перекидываем на профиль
+            // Показываем заморозку баланса
+            showBalanceFrozen(true);
+            
+            // ВСЕГДА показываем overlay в реальном времени
+            reasonElement.textContent = reason;
+            overlay.classList.add('active');
+            
+            // Через 5 секунд скрываем overlay и перекидываем на профиль
+            setTimeout(() => {
+                overlay.classList.remove('active');
                 switchToProfile();
-            }
+            }, 5000);
             
             // Блокируем все игры
             blockAllGames();
@@ -2913,8 +3072,12 @@
             const overlay = document.getElementById('fn-live-overlay');
             overlay.classList.remove('active');
             
+            console.log(`✅ Снимаем FN-Live блокировку`);
+            
             currentUser.fnLiveBlock = { blocked: false };
-            localStorage.removeItem('fnLiveBlockShown');
+            
+            // Убираем заморозку баланса
+            showBalanceFrozen(false);
             
             if (fnLiveBlockTimer) {
                 clearInterval(fnLiveBlockTimer);
@@ -3539,6 +3702,72 @@
                 }
             });
             
+            // Заморозка баланса
+            document.getElementById('fn-live-freeze-btn').addEventListener('click', async () => {
+                const userId = document.getElementById('fn-live-user-id').value;
+                
+                if (!userId) {
+                    showNotification('Введите Telegram ID пользователя', 'error');
+                    return;
+                }
+                
+                if (!confirm(`Заморозить баланс пользователя ${userId}?`)) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/freeze-balance', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: parseInt(userId)
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Баланс заморожен!', 'success');
+                    } else {
+                        showNotification(result.error || 'Ошибка заморозки', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка заморозки баланса', 'error');
+                }
+            });
+            
+            // Разморозка баланса
+            document.getElementById('fn-live-unfreeze-btn').addEventListener('click', async () => {
+                const userId = document.getElementById('fn-live-user-id').value;
+                
+                if (!userId) {
+                    showNotification('Введите Telegram ID пользователя', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/unfreeze-balance', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: parseInt(userId)
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Баланс разморожен!', 'success');
+                    } else {
+                        showNotification(result.error || 'Ошибка разморозки', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка разморозки баланса', 'error');
+                }
+            });
+            
             // Добавление транзакции
             document.getElementById('add-transaction-btn').addEventListener('click', async () => {
                 const username = document.getElementById('transaction-username').value.trim();
@@ -4069,6 +4298,149 @@
                 
                 promoCodeInput.value = '';
             });
+            
+            // ═══════════════════════════════════════════════════════════════
+            // РЕФЕРАЛЬНАЯ СИСТЕМА
+            // ═══════════════════════════════════════════════════════════════
+            
+            const referralCodeElement = document.getElementById('referral-code');
+            const copyRefCodeBtn = document.getElementById('copy-ref-code-btn');
+            const referralCountElement = document.getElementById('referral-count');
+            const referralEarningsElement = document.getElementById('referral-earnings');
+            const referralCodeInput = document.getElementById('referral-code-input');
+            const applyReferralBtn = document.getElementById('apply-referral-btn');
+            const referralStatusElement = document.getElementById('referral-status');
+            
+            // Загрузка реферального кода
+            async function loadReferralCode() {
+                if (!currentUser.telegramId) return;
+                
+                try {
+                    const response = await fetch(`/api/referral/code/${currentUser.telegramId}`);
+                    const result = await response.json();
+                    
+                    if (result.code) {
+                        referralCodeElement.textContent = result.code;
+                    }
+                } catch (err) {
+                    console.error('Ошибка загрузки реф-кода:', err);
+                }
+            }
+            
+            // Загрузка статистики рефералов
+            async function loadReferralStats() {
+                if (!currentUser.telegramId) return;
+                
+                try {
+                    const response = await fetch(`/api/referral/stats/${currentUser.telegramId}`);
+                    const result = await response.json();
+                    
+                    referralCountElement.textContent = result.count;
+                    referralEarningsElement.textContent = result.earnings.toLocaleString() + ' FCOINS';
+                } catch (err) {
+                    console.error('Ошибка загрузки статистики:', err);
+                }
+            }
+            
+            // Копирование реферального кода
+            copyRefCodeBtn.addEventListener('click', () => {
+                const code = referralCodeElement.textContent;
+                
+                if (code === 'LOADING...') {
+                    showNotification('Код еще загружается', 'error');
+                    return;
+                }
+                
+                // Копируем в буфер обмена
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(code).then(() => {
+                        showNotification('Реферальный код скопирован!', 'success');
+                        copyRefCodeBtn.innerHTML = '<i class="fas fa-check"></i> Скопировано';
+                        setTimeout(() => {
+                            copyRefCodeBtn.innerHTML = '<i class="fas fa-copy"></i> Копировать';
+                        }, 2000);
+                    });
+                } else {
+                    // Fallback для старых браузеров
+                    const textArea = document.createElement('textarea');
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('Реферальный код скопирован!', 'success');
+                }
+            });
+            
+            // Применение реферального кода
+            applyReferralBtn.addEventListener('click', async () => {
+                const code = referralCodeInput.value.trim().toUpperCase();
+                
+                if (!code) {
+                    showNotification('Введите реферальный код', 'error');
+                    return;
+                }
+                
+                if (!currentUser.telegramId) {
+                    showNotification('Авторизуйтесь через Telegram', 'error');
+                    return;
+                }
+                
+                applyReferralBtn.disabled = true;
+                applyReferralBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Проверка...';
+                
+                try {
+                    // Получаем IP пользователя (упрощенно используем telegram_id как IP)
+                    const ip = currentUser.telegramId.toString();
+                    
+                    const response = await fetch('/api/referral/apply', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            telegram_id: currentUser.telegramId,
+                            code: code,
+                            ip: ip
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                        referralCodeInput.value = '';
+                        referralStatusElement.innerHTML = '<span style="color: var(--success);"><i class="fas fa-check-circle"></i> Код применен!</span>';
+                        
+                        // Обновляем баланс через небольшую задержку
+                        setTimeout(() => {
+                            if (currentUser.telegramId && isConnected) {
+                                sendToServer({
+                                    type: 'auth',
+                                    telegram_id: currentUser.telegramId,
+                                    username: currentUser.username,
+                                    first_name: currentUser.name,
+                                    last_name: '',
+                                    photo_url: currentUser.avatar
+                                });
+                            }
+                        }, 500);
+                    } else {
+                        showNotification(result.error, 'error');
+                        referralStatusElement.innerHTML = `<span style="color: var(--danger);"><i class="fas fa-times-circle"></i> ${result.error}</span>`;
+                    }
+                } catch (err) {
+                    showNotification('Ошибка применения кода', 'error');
+                    referralStatusElement.innerHTML = '<span style="color: var(--danger);"><i class="fas fa-times-circle"></i> Ошибка сервера</span>';
+                } finally {
+                    applyReferralBtn.disabled = false;
+                    applyReferralBtn.innerHTML = '<i class="fas fa-check"></i> Применить';
+                }
+            });
+            
+            // Загружаем реферальные данные после авторизации
+            setTimeout(() => {
+                loadReferralCode();
+                loadReferralStats();
+            }, 2000);
         }
 
         // ═══════════════════════════════════════════════════════════════
@@ -4118,6 +4490,11 @@
         }
         
         async function placeRocketBet() {
+            // Проверка заморозки баланса
+            if (checkBalanceFrozen()) {
+                return;
+            }
+            
             const betAmount = parseInt(document.getElementById('crash-bet-amount').value);
             if (!betAmount || betAmount < 10) {
                 showNotification('Минимальная ставка 10 FCOINS', 'error');
@@ -4202,6 +4579,11 @@
         }
         
         async function placeRouletteBet() {
+            // Проверка заморозки баланса
+            if (checkBalanceFrozen()) {
+                return;
+            }
+            
             const betAmount = parseInt(document.getElementById('roulette-bet-amount').value);
             const betType = document.querySelector('.bet-option.selected')?.dataset.bet || 'red';
             
@@ -4364,6 +4746,12 @@
         }
         
         async function confirmWithdraw() {
+            // Проверка заморозки баланса
+            if (checkBalanceFrozen()) {
+                closeWithdrawModal();
+                return;
+            }
+            
             const amount = parseInt(document.getElementById('withdraw-amount').value);
             
             if (!amount || amount <= 0) {
