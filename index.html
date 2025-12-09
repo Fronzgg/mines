@@ -138,176 +138,6 @@
             color: var(--warning);
         }
 
-        /* История пополнений и выводов */
-        .transactions-panel {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 90%;
-            max-width: 380px;
-            height: 100vh;
-            background: var(--light);
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            z-index: 10000;
-            transition: right 0.4s ease;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .transactions-panel.active {
-            right: 0;
-        }
-
-        .transactions-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--light-gray);
-        }
-
-        .transactions-header h2 {
-            color: var(--primary);
-            font-size: 24px;
-        }
-
-        .transactions-section {
-            margin-bottom: 30px;
-        }
-
-        .transactions-section h3 {
-            margin-bottom: 15px;
-            color: var(--dark);
-            font-size: 18px;
-        }
-
-        .transactions-list {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-
-        .transaction-amount {
-            font-weight: 700;
-        }
-
-        .transaction-amount.deposit {
-            color: var(--success);
-        }
-
-        .transaction-amount.withdrawal {
-            color: var(--danger);
-        }
-
-        .transaction-date {
-            font-size: 12px;
-            color: var(--gray);
-        }
-
-        /* Окно пополнения/вывода */
-        .deposit-withdraw-window {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 90%;
-            max-width: 380px;
-            height: 100vh;
-            background: var(--light);
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            z-index: 10001;
-            transition: right 0.4s ease;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .deposit-withdraw-window.active {
-            right: 0;
-        }
-
-        .dw-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--light-gray);
-        }
-
-        .dw-header h2 {
-            color: var(--primary);
-            font-size: 24px;
-        }
-
-        .dw-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--light-gray);
-        }
-
-        .dw-tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-            border-bottom: 3px solid transparent;
-        }
-
-        .dw-tab.active {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .dw-input {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 2px solid var(--light-gray);
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-
-        .dw-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(to right, var(--primary), var(--accent));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 10px;
-            transition: var(--transition);
-        }
-
-        .dw-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .dw-btn.deposit {
-            background: linear-gradient(to right, var(--success), #2e7d32);
-        }
-
-        .dw-btn.withdraw {
-            background: linear-gradient(to right, var(--danger), #c62828);
-        }
-
         /* Админ панель - скрыта в профиле */
         .admin-panel {
             position: fixed;
@@ -318,7 +148,7 @@
             height: 100vh;
             background: var(--light);
             box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            z-index: 10002;
+            z-index: 10000;
             transition: right 0.4s ease;
             overflow-y: auto;
             padding: 20px;
@@ -706,8 +536,11 @@
         }
 
         .cell.mine::after {
-            content: '💣';
+            content: '\f1e2';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
             font-size: 22px;
+            color: white;
         }
 
         .cell.diamond {
@@ -716,8 +549,11 @@
         }
 
         .cell.diamond::after {
-            content: '💎';
+            content: '\f3a5';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
             font-size: 22px;
+            color: white;
         }
 
         .cell.flag {
@@ -726,8 +562,11 @@
         }
 
         .cell.flag::after {
-            content: '🚩';
+            content: '\f024';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
             font-size: 18px;
+            color: white;
         }
 
         /* Игра Краш */
@@ -939,6 +778,19 @@
             100% { transform: translateY(-20px); }
         }
 
+        /* Анимация рулетки */
+        @keyframes wheelSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1800deg); }
+        }
+
+        .slots-result {
+            margin: 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+            min-height: 30px;
+        }
+
         /* FN-Live блокировка (как VAC в CS2) */
         .fn-live-overlay {
             position: fixed;
@@ -1071,29 +923,6 @@
                 opacity: 0.5;
                 transform: scale(1.2);
             }
-        }
-
-        /* Кнопка пополнения/вывода в шапке */
-        .transactions-btn {
-            position: fixed;
-            top: 80px;
-            left: 15px;
-            background: var(--card-bg);
-            padding: 8px 15px;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            z-index: 100;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .transactions-btn:hover {
-            transform: translateY(-2px);
         }
 
         /* Профиль */
@@ -1414,70 +1243,6 @@
     </style>
 </head>
 <body>
-    <!-- Панель истории транзакций -->
-    <div class="transactions-panel" id="transactions-panel">
-        <div class="transactions-header">
-            <h2>История операций</h2>
-            <button class="close-modal" id="close-transactions">&times;</button>
-        </div>
-        
-        <div class="transactions-section">
-            <h3>Пополнения</h3>
-            <div class="transactions-list" id="deposits-list">
-                <!-- Пополнения будут загружены через JS -->
-            </div>
-        </div>
-        
-        <div class="transactions-section">
-            <h3>Выводы</h3>
-            <div class="transactions-list" id="withdrawals-list">
-                <!-- Выводы будут загружены через JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Окно пополнения/вывода -->
-    <div class="deposit-withdraw-window" id="deposit-withdraw-window">
-        <div class="dw-header">
-            <h2 id="dw-title">Пополнение баланса</h2>
-            <button class="close-modal" id="close-dw">&times;</button>
-        </div>
-        
-        <div class="dw-tabs">
-            <div class="dw-tab active" data-tab="deposit">Пополнить</div>
-            <div class="dw-tab" data-tab="withdraw">Вывести</div>
-        </div>
-        
-        <div id="deposit-tab" class="dw-tab-content">
-            <input type="number" class="dw-input" id="deposit-amount" placeholder="Сумма FCOINS" min="10">
-            <select class="dw-input" id="deposit-method">
-                <option value="card">Банковская карта</option>
-                <option value="qiwi">QIWI</option>
-                <option value="yoomoney">ЮMoney</option>
-                <option value="crypto">Криптовалюта</option>
-            </select>
-            <button class="dw-btn deposit" id="submit-deposit">
-                <i class="fas fa-credit-card"></i> Пополнить
-            </button>
-            <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">Минимальная сумма пополнения: 10 FCOINS</p>
-        </div>
-        
-        <div id="withdraw-tab" class="dw-tab-content" style="display: none;">
-            <input type="number" class="dw-input" id="withdraw-amount" placeholder="Сумма FCOINS" min="100">
-            <input type="text" class="dw-input" id="withdraw-wallet" placeholder="Номер карты/кошелька">
-            <select class="dw-input" id="withdraw-method">
-                <option value="card">Банковская карта</option>
-                <option value="qiwi">QIWI</option>
-                <option value="yoomoney">ЮMoney</option>
-                <option value="crypto">Криптовалюта</option>
-            </select>
-            <button class="dw-btn withdraw" id="submit-withdraw">
-                <i class="fas fa-wallet"></i> Вывести
-            </button>
-            <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">Минимальная сумма вывода: 100 FCOINS</p>
-        </div>
-    </div>
-
     <!-- Админ панель -->
     <div class="admin-panel" id="admin-panel">
         <div class="admin-header">
@@ -1508,6 +1273,7 @@
             <input type="text" class="admin-input" id="promo-code-input" placeholder="Код промокода">
             <input type="number" class="admin-input" id="promo-amount" placeholder="Сумма FCOINS">
             <button class="admin-btn" id="add-promo">Добавить промокод</button>
+            <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">Промокоды сохраняются в файл promocodes.txt</p>
         </div>
         
         <div class="admin-section">
@@ -1516,29 +1282,6 @@
             <input type="number" class="admin-input" id="balance-change" placeholder="Сумма">
             <button class="admin-btn" id="add-balance">Добавить FCOINS</button>
             <button class="admin-btn" id="remove-balance" style="background: linear-gradient(to right, #ea4335, #c62828);">Списать FCOINS</button>
-        </div>
-        
-        <div class="admin-section">
-            <h3>Показать мины (админ)</h3>
-            <div style="display: flex; gap: 10px;">
-                <button class="admin-btn" id="show-mines">
-                    <i class="fas fa-eye"></i> Показать мины
-                </button>
-                <button class="admin-btn" id="hide-mines">
-                    <i class="fas fa-eye-slash"></i> Скрыть мины
-                </button>
-            </div>
-        </div>
-        
-        <div class="admin-section">
-            <h3>Управление транзакциями</h3>
-            <input type="text" class="admin-input" id="trans-user" placeholder="Telegram ID пользователя">
-            <input type="number" class="admin-input" id="trans-amount" placeholder="Сумма FCOINS">
-            <select class="admin-input" id="trans-type">
-                <option value="deposit">Пополнение</option>
-                <option value="withdrawal">Вывод</option>
-            </select>
-            <button class="admin-btn" id="add-transaction">Добавить транзакцию</button>
         </div>
         
         <div class="admin-section">
@@ -1555,6 +1298,9 @@
                     <input type="checkbox" id="fn-live-toggle" checked style="width: 20px; height: 20px; cursor: pointer;">
                 </label>
             </div>
+            <button class="admin-btn" id="notify-update-btn" style="background: linear-gradient(to right, #667eea, #764ba2); margin-top: 10px;">
+                <i class="fas fa-rocket"></i> Уведомить об обновлении
+            </button>
         </div>
         
         <div class="admin-section">
@@ -1567,6 +1313,33 @@
             </button>
             <button class="admin-btn" id="fn-live-unblock-btn" style="background: linear-gradient(to right, #4caf50, #2e7d32);">
                 <i class="fas fa-unlock"></i> Снять блокировку
+            </button>
+        </div>
+        
+        <div class="admin-section">
+            <h3><i class="fas fa-wallet"></i> Управление транзакциями</h3>
+            <input type="text" class="admin-input" id="transaction-username" placeholder="Имя пользователя">
+            <select class="admin-input" id="transaction-type">
+                <option value="deposit">Пополнение</option>
+                <option value="withdrawal">Вывод</option>
+            </select>
+            <input type="number" class="admin-input" id="transaction-amount" placeholder="Сумма FCOINS">
+            <button class="admin-btn" id="add-transaction-btn" style="background: linear-gradient(to right, #ff9800, #f57c00);">
+                <i class="fas fa-plus-circle"></i> Добавить транзакцию
+            </button>
+            
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--light-gray);">
+            
+            <h4 style="margin-bottom: 15px; color: var(--dark);">Изменить статус транзакции</h4>
+            <input type="number" class="admin-input" id="transaction-id" placeholder="ID транзакции">
+            <select class="admin-input" id="transaction-status">
+                <option value="pending">Ожидание</option>
+                <option value="processing">Обработка</option>
+                <option value="completed">Успешно</option>
+                <option value="rejected">Отклонено</option>
+            </select>
+            <button class="admin-btn" id="update-status-btn" style="background: linear-gradient(to right, #2196f3, #0d47a1);">
+                <i class="fas fa-edit"></i> Изменить статус
             </button>
         </div>
         
@@ -1603,16 +1376,45 @@
         <span id="online-count">0</span> онлайн
     </div>
 
-    <!-- Кнопка пополнения/вывода -->
-    <div class="transactions-btn" id="transactions-btn">
-        <i class="fas fa-exchange-alt"></i>
-        <span>Пополнить/Вывести</span>
-    </div>
-
     <!-- Статус FN-Live системы -->
     <div class="online-counter" id="fn-live-system-status" style="top: 120px; background: linear-gradient(135deg, #4caf50, #2e7d32); color: white;">
         <i class="fas fa-shield-alt"></i>
         <span>FN-Live активен</span>
+    </div>
+
+    <!-- Модальное окно пополнения -->
+    <div id="deposit-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10001; display: none; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: var(--light); border-radius: 15px; padding: 30px; width: 100%; max-width: 400px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--primary); margin: 0;"><i class="fas fa-plus-circle"></i> Пополнение</h2>
+                <button onclick="closeDepositModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray);">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p style="color: var(--gray); margin-bottom: 20px;">Введите сумму пополнения:</p>
+            <input type="number" id="deposit-amount" placeholder="Сумма FCOINS" style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--light-gray); font-size: 16px; margin-bottom: 20px;">
+            <button onclick="confirmDeposit()" class="btn btn-primary" style="width: 100%; background: linear-gradient(to right, var(--success), #2e7d32);">
+                <i class="fas fa-paper-plane"></i> Отправить заявку в бота
+            </button>
+        </div>
+    </div>
+
+    <!-- Модальное окно вывода -->
+    <div id="withdraw-modal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10001; display: none; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: var(--light); border-radius: 15px; padding: 30px; width: 100%; max-width: 400px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--danger); margin: 0;"><i class="fas fa-minus-circle"></i> Вывод средств</h2>
+                <button onclick="closeWithdrawModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray);">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p style="color: var(--gray); margin-bottom: 10px;">Ваш баланс: <strong id="withdraw-balance">0</strong> FCOINS</p>
+            <p style="color: var(--gray); margin-bottom: 20px;">Введите сумму вывода:</p>
+            <input type="number" id="withdraw-amount" placeholder="Сумма FCOINS" style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--light-gray); font-size: 16px; margin-bottom: 20px;">
+            <button onclick="confirmWithdraw()" class="btn btn-secondary" style="width: 100%; background: linear-gradient(to right, var(--danger), #c62828); color: white;">
+                <i class="fas fa-check"></i> Отправить заявку на вывод
+            </button>
+        </div>
     </div>
 
     <!-- Экран технического перерыва -->
@@ -1633,7 +1435,7 @@
 
     <div class="container">
         <!-- Шапка -->
-        <header>
+        <header></header>
             <div class="logo">
                 <i class="fas fa-bomb logo-icon"></i>
                 <h1>FRNMINES</h1>
@@ -1679,7 +1481,7 @@
                     </button>
                 </div>
                 <div style="margin-top: 15px; font-size: 14px; color: var(--gray);">
-                    <p><i class="fas fa-info-circle"></i> Базовый множитель: <strong id="base-multiplier">1.20x</strong> | Шаг увеличения: <strong id="step-multiplier">0.08x</strong></p>
+                    <p><i class="fas fa-info-circle"></i> Базовая ставка: <strong id="base-multiplier">1.50x</strong> | Шаг увеличения: <strong>0.10x</strong></p>
                 </div>
             </div>
 
@@ -1688,11 +1490,11 @@
                     <h2>Поле игры 5x5</h2>
                     <div class="stats">
                         <div class="stat">
-                            <div class="stat-value" id="multiplier">1.20x</div>
+                            <div class="stat-value" id="multiplier">1.50x</div>
                             <div class="stat-label">Множитель</div>
                         </div>
                         <div class="stat">
-                            <div class="stat-value" id="potential-win">120</div>
+                            <div class="stat-value" id="potential-win">150</div>
                             <div class="stat-label">Выигрыш</div>
                         </div>
                         <div class="stat">
@@ -1714,7 +1516,7 @@
             <div class="bonus-card">
                 <h3>Ежедневный бонус</h3>
                 <p>Заходи каждый день, чтобы получить награду!</p>
-                <div class="bonus-amount">+150 FCOINS</div>
+                <div class="bonus-amount">+10,000 FCOINS</div>
                 <button class="btn btn-primary" id="daily-bonus-btn">
                     <i class="fas fa-gift"></i> Получить бонус
                 </button>
@@ -1729,6 +1531,7 @@
                     </button>
                 </div>
                 <p>Введите промокод для получения бонусных FCOINS</p>
+                <p style="font-size: 12px; color: var(--gray); margin-top: 10px;">Промокоды сохраняются в файл promocodes.txt</p>
             </div>
         </section>
 
@@ -1776,9 +1579,9 @@
                         </div>
                     </div>
                     <div class="roulette-bets" style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
-                        <div class="bet-option bet-red selected" data-bet="red" style="cursor: pointer;">Красное (x2)</div>
-                        <div class="bet-option bet-black" data-bet="black" style="cursor: pointer;">Черное (x2)</div>
-                        <div class="bet-option bet-green" data-bet="green" style="cursor: pointer;">Зеро (x14)</div>
+                        <div class="bet-option bet-red selected" data-bet="red" onclick="this.parentElement.querySelectorAll('.bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Красное (x2)</div>
+                        <div class="bet-option bet-black" data-bet="black" onclick="this.parentElement.querySelectorAll('.bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Черное (x2)</div>
+                        <div class="bet-option bet-green" data-bet="green" onclick="this.parentElement.querySelectorAll('.bet-option').forEach(el => el.classList.remove('selected')); this.classList.add('selected');" style="cursor: pointer;">Зеро (x14)</div>
                     </div>
                     <div class="controls-row" style="margin-top: 20px;">
                         <div class="control-group">
@@ -1841,11 +1644,8 @@
                     <p>Дата регистрации: <span id="reg-date">15.06.2024</span></p>
                 </div>
                 <div class="profile-actions">
-                    <button class="btn btn-primary" id="admin-access-btn" style="display: none;">
+                    <button class="btn btn-primary" id="admin-access-btn">
                         <i class="fas fa-cog"></i> Админ-панель
-                    </button>
-                    <button class="btn btn-secondary" id="history-btn">
-                        <i class="fas fa-history"></i> История операций
                     </button>
                 </div>
             </div>
@@ -1923,6 +1723,37 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="badges-container">
+                <h2 class="section-title"><i class="fas fa-wallet"></i> Транзакции</h2>
+                
+                <!-- Кнопки пополнения и вывода -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" id="deposit-btn" style="flex: 1; background: linear-gradient(to right, var(--success), #2e7d32);">
+                        <i class="fas fa-plus-circle"></i> Пополнить
+                    </button>
+                    <button class="btn btn-secondary" id="withdraw-btn" style="flex: 1; background: linear-gradient(to right, var(--danger), #c62828); color: white;">
+                        <i class="fas fa-minus-circle"></i> Вывести
+                    </button>
+                </div>
+                
+                <!-- Вкладки фильтрации -->
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid var(--light-gray);">
+                    <button class="transaction-tab active" data-filter="all" style="flex: 1; padding: 12px; background: none; border: none; border-bottom: 3px solid var(--primary); font-weight: 600; color: var(--primary); cursor: pointer; transition: var(--transition);">
+                        Все
+                    </button>
+                    <button class="transaction-tab" data-filter="deposit" style="flex: 1; padding: 12px; background: none; border: none; border-bottom: 3px solid transparent; font-weight: 600; color: var(--gray); cursor: pointer; transition: var(--transition);">
+                        Пополнения
+                    </button>
+                    <button class="transaction-tab" data-filter="withdrawal" style="flex: 1; padding: 12px; background: none; border: none; border-bottom: 3px solid transparent; font-weight: 600; color: var(--gray); cursor: pointer; transition: var(--transition);">
+                        Выводы
+                    </button>
+                </div>
+                
+                <div id="transactions-list" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Транзакции будут загружены через JS -->
+                </div>
+            </div>
         </section>
     </div>
 
@@ -1951,6 +1782,20 @@
         Текст уведомления
     </div>
 
+    <!-- Нотификация обновления -->
+    <div id="update-notification" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 10000; display: none; max-width: 90%; text-align: center;">
+        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center;">
+            <i class="fas fa-rocket" style="font-size: 24px;"></i>
+            <div style="flex: 1; min-width: 200px;">
+                <div style="font-size: 18px; font-weight: 700; margin-bottom: 5px;">Доступно обновление!</div>
+                <div style="font-size: 14px; opacity: 0.9;">Новая версия приложения готова</div>
+            </div>
+            <button onclick="reloadApp()" style="background: white; color: #667eea; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px; transition: transform 0.2s;">
+                <i class="fas fa-sync-alt"></i> Обновить
+            </button>
+        </div>
+    </div>
+
     <script>
         // Глобальные переменные игры
         let balance = 10000;
@@ -1958,8 +1803,8 @@
         let mineCount = 3;
         let gameActive = false;
         let revealedCells = 0;
-        let multiplier = 1.2;
-        let multiplierStep = 0.08;
+        let multiplier = 1.5; // НАЧАЛЬНЫЙ МНОЖИТЕЛЬ 1.5x
+        let multiplierStep = 0.10; // ШАГ УВЕЛИЧЕНИЯ 0.10x
         let minePositions = [];
         let flaggedCells = [];
         let totalGamesPlayed = 47;
@@ -1972,17 +1817,11 @@
             maxMultiplier: 8.5
         };
         
-        // Транзакции пользователя
-        let transactions = {
-            deposits: [],
-            withdrawals: []
-        };
-        
         // Переменные для игры Краш
         let crashGameActive = false;
         let crashMultiplier = 1.0;
         let crashBet = 100;
-        let cashoutMultiplier = 0;
+        let cashoutMultiplier = 1.0;
         let crashInterval;
         
         // Переменные для игры Рулетка
@@ -2005,6 +1844,13 @@
             '7️⃣7️⃣7️⃣': 50
         };
         
+        // Переменные для онлайн игр
+        let currentRocketGameId = null;
+        let rocketBetPlaced = false;
+        let currentRouletteGameId = null;
+        let rouletteBetPlaced = false;
+        let dailyBonusTimer = null;
+        
         // Telegram Web App
         let tg = window.Telegram?.WebApp;
         
@@ -2013,17 +1859,17 @@
         let reconnectInterval = null;
         let isConnected = false;
         
-        // Промокоды
+        // Промокоды (имитация файла promocodes.txt)
         let promoCodes = {};
         
-        // Пользователь
+        // Пользователь (только 1 тестовый профиль)
         let currentUser = {
             id: 12345,
             name: "Игрок_Тест",
             username: "test_user",
             avatar: "https://i.pravatar.cc/150?img=12",
             verified: false,
-            telegramId: 12345
+            telegramId: 12345 // Тестовый ID для локального тестирования
         };
         
         // Админ данные
@@ -2044,7 +1890,6 @@
         const multiplierElement = document.getElementById('multiplier');
         const potentialWinElement = document.getElementById('potential-win');
         const baseMultiplierElement = document.getElementById('base-multiplier');
-        const stepMultiplierElement = document.getElementById('step-multiplier');
         const minesGrid = document.getElementById('mines-grid');
         const notification = document.getElementById('notification');
         const navItems = document.querySelectorAll('.nav-item');
@@ -2060,8 +1905,6 @@
         const tgUsernameElement = document.getElementById('tg-username');
         const verifiedBadge = document.getElementById('verified-badge');
         const adminAccessBtn = document.getElementById('admin-access-btn');
-        const historyBtn = document.getElementById('history-btn');
-        const transactionsBtn = document.getElementById('transactions-btn');
         
         // Статистика элементы
         const totalWinsElement = document.getElementById('total-wins');
@@ -2069,33 +1912,42 @@
         const maxWinElement = document.getElementById('max-win');
         const maxMultiplierStatElement = document.getElementById('max-multiplier-stat');
         
-        // Элементы транзакций
-        const transactionsPanel = document.getElementById('transactions-panel');
-        const closeTransactions = document.getElementById('close-transactions');
-        const depositsList = document.getElementById('deposits-list');
-        const withdrawalsList = document.getElementById('withdrawals-list');
-        const depositWithdrawWindow = document.getElementById('deposit-withdraw-window');
-        const closeDW = document.getElementById('close-dw');
-        const dwTabs = document.querySelectorAll('.dw-tab');
-        const depositTab = document.getElementById('deposit-tab');
-        const withdrawTab = document.getElementById('withdraw-tab');
-        const depositAmount = document.getElementById('deposit-amount');
-        const withdrawAmount = document.getElementById('withdraw-amount');
-        const submitDeposit = document.getElementById('submit-deposit');
-        const submitWithdraw = document.getElementById('submit-withdraw');
-        const dwTitle = document.getElementById('dw-title');
+        // Элементы игры Краш
+        const crashBetAmountElement = document.getElementById('crash-bet-amount');
+        const crashBetDownButton = document.getElementById('crash-bet-down');
+        const crashBetUpButton = document.getElementById('crash-bet-up');
+        const startCrashButton = document.getElementById('start-crash');
+        const cashOutCrashButton = document.getElementById('cash-out-crash');
+        const crashMultiplierElement = document.getElementById('crash-multiplier');
+        const rocketElement = document.getElementById('rocket');
+        const graphLineElement = document.getElementById('graph-line');
+        
+        // Элементы игры Рулетка
+        const rouletteBetAmountElement = document.getElementById('roulette-bet-amount');
+        const rouletteBetDownButton = document.getElementById('roulette-bet-down');
+        const rouletteBetUpButton = document.getElementById('roulette-bet-up');
+        const spinRouletteButton = document.getElementById('spin-roulette');
+        const rouletteBetsElement = document.getElementById('roulette-bets');
+        const wheelNumbersElement = document.getElementById('wheel-numbers');
+        const rouletteWheelElement = document.getElementById('roulette-wheel');
         
         // Элементы админ панели
         const adminPanel = document.getElementById('admin-panel');
         const closeAdmin = document.getElementById('close-admin');
-        const showMinesBtn = document.getElementById('show-mines');
-        const hideMinesBtn = document.getElementById('hide-mines');
-        const addTransactionBtn = document.getElementById('add-transaction');
+        const adminLoginElement = document.getElementById('admin-login');
+        const loginButton = document.getElementById('login-btn');
+        const userList = document.getElementById('user-list');
+        const giveBadgeButton = document.getElementById('give-badge');
+        const addPromoButton = document.getElementById('add-promo');
+        const addBalanceButton = document.getElementById('add-balance');
+        const removeBalanceButton = document.getElementById('remove-balance');
+        const sendAllButton = document.getElementById('send-all');
+        const adminMessageElement = document.getElementById('admin-message');
 
         // Инициализация игрового поля 5x5
         function initGameGrid() {
             minesGrid.innerHTML = '';
-            const totalCells = 25;
+            const totalCells = 25; // Поле 5x5
             
             for (let i = 0; i < totalCells; i++) {
                 const cell = document.createElement('div');
@@ -2112,33 +1964,24 @@
             }
         }
 
-        // Расчет начального множителя в зависимости от количества мин
-        function calculateInitialMultiplier() {
-            if (mineCount >= 20) {
-                return 2.0;
-            } else if (mineCount >= 15) {
-                return 1.8;
-            } else if (mineCount >= 10) {
-                return 1.6;
-            } else if (mineCount >= 5) {
-                return 1.4;
-            } else {
-                return 1.2;
-            }
-        }
-
-        // Расчет шага увеличения множителя в зависимости от количества мин
-        function calculateMultiplierStep() {
-            if (mineCount >= 20) {
-                return 0.25;
-            } else if (mineCount >= 15) {
-                return 0.20;
-            } else if (mineCount >= 10) {
-                return 0.15;
-            } else if (mineCount >= 5) {
-                return 0.10;
-            } else {
-                return 0.08;
+        // Инициализация рулетки
+        function initRoulette() {
+            // Обработчики для выбора ставки (онлайн рулетка)
+            const betOptions = document.querySelectorAll('.bet-option');
+            if (betOptions.length > 0) {
+                betOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        document.querySelectorAll('.bet-option').forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selectedBet = this.dataset.bet;
+                    });
+                });
+                
+                // Выбираем красное по умолчанию
+                const redOption = document.querySelector('.bet-red');
+                if (redOption) {
+                    redOption.classList.add('selected');
+                }
             }
         }
 
@@ -2155,9 +1998,46 @@
             }
         }
 
+        // Расчет начального множителя в зависимости от количества мин
+        function calculateInitialMultiplier() {
+            // Чем больше мин, тем выше начальный множитель
+            const totalCells = 25;
+            const safeCells = totalCells - mineCount;
+            
+            // Базовая формула: чем меньше безопасных клеток, тем выше множитель
+            if (mineCount >= 20) {
+                return 15.0; // 20-24 мины = очень высокий риск
+            } else if (mineCount >= 15) {
+                return 8.0; // 15-19 мин = высокий риск
+            } else if (mineCount >= 10) {
+                return 4.0; // 10-14 мин = средний риск
+            } else if (mineCount >= 5) {
+                return 2.0; // 5-9 мин = низкий риск
+            } else {
+                return 1.3; // 1-4 мины = очень низкий риск
+            }
+        }
+
+        // Расчет шага увеличения множителя в зависимости от количества мин
+        function calculateMultiplierStep() {
+            // Чем больше мин, тем больше шаг (больше риск = больше награда)
+            if (mineCount >= 20) {
+                return 2.0; // Очень быстрый рост
+            } else if (mineCount >= 15) {
+                return 1.0; // Быстрый рост
+            } else if (mineCount >= 10) {
+                return 0.5; // Средний рост
+            } else if (mineCount >= 5) {
+                return 0.3; // Медленный рост
+            } else {
+                return 0.15; // Очень медленный рост
+            }
+        }
+
         // Начало игры Мины
         function startGame() {
             if (gameActive) {
+                // Сброс игры
                 resetGame();
                 return;
             }
@@ -2178,21 +2058,23 @@
             
             gameActive = true;
             revealedCells = 0;
-            flaggedCells = [];
             
+            // Расчет множителя в зависимости от суммы ставки
             multiplier = calculateInitialMultiplier();
             multiplierStep = calculateMultiplierStep();
             
+            // Обновляем отображение базового множителя
             baseMultiplierElement.textContent = multiplier.toFixed(2) + 'x';
-            stepMultiplierElement.textContent = multiplierStep.toFixed(2) + 'x';
+            
             updateMultiplier();
             updatePotentialWin();
             
+            // Генерация мин
             generateMines();
             
+            // Сброс ячеек
             document.querySelectorAll('.cell').forEach(cell => {
                 cell.className = 'cell';
-                cell.classList.remove('pulse');
             });
             
             startGameButton.innerHTML = '<i class="fas fa-sync-alt"></i> Новая игра';
@@ -2201,19 +2083,19 @@
             totalGamesPlayed++;
             gamesPlayedElement.textContent = totalGamesPlayed;
             
-            showNotification(`Игра началась! Мины: ${mineCount}, начальный множитель: ${multiplier.toFixed(2)}x`, 'info');
+            showNotification(`Игра началась! Начальный множитель: ${multiplier.toFixed(2)}x, шаг: ${multiplierStep.toFixed(2)}x`, 'info');
         }
 
         // Сброс игры Мины
         function resetGame() {
             gameActive = false;
             revealedCells = 0;
-            flaggedCells = [];
             multiplier = calculateInitialMultiplier();
             
             updateMultiplier();
             updatePotentialWin();
             
+            // Сброс ячеек
             document.querySelectorAll('.cell').forEach(cell => {
                 cell.className = 'cell';
             });
@@ -2237,22 +2119,26 @@
                 return;
             }
             
+            // Проверка на мину
             if (minePositions.includes(index)) {
                 cell.classList.add('mine', 'revealed');
                 gameOver(false);
                 return;
             }
             
+            // Открытие безопасной ячейки
             cell.classList.add('diamond', 'revealed');
             
             revealedCells++;
             
+            // Увеличение множителя на шаг
             multiplier += multiplierStep;
-            multiplier = parseFloat(multiplier.toFixed(2));
+            multiplier = parseFloat(multiplier.toFixed(2)); // Округляем до 2 знаков
             
             updateMultiplier();
             updatePotentialWin();
             
+            // Автозавершение при открытии всех безопасных ячеек
             if (revealedCells === 25 - mineCount) {
                 gameOver(true);
             }
@@ -2279,6 +2165,7 @@
                 cell.classList.add('flag');
                 flaggedCells.push(index);
                 
+                // Проверка, все ли мины отмечены
                 if (flaggedCells.length === mineCount && 
                     flaggedCells.every(pos => minePositions.includes(pos))) {
                     gameOver(true);
@@ -2290,6 +2177,7 @@
         function gameOver(isWin) {
             gameActive = false;
             
+            // Показать все мины
             minePositions.forEach(pos => {
                 const cell = document.querySelector(`.cell[data-index="${pos}"]`);
                 if (!cell.classList.contains('flag')) {
@@ -2301,6 +2189,7 @@
                 const winAmount = Math.floor(currentBet * multiplier);
                 balance += winAmount;
                 
+                // Обновление статистики
                 if (winAmount > playerStats.maxWin) {
                     playerStats.maxWin = winAmount;
                     maxWinElement.textContent = playerStats.maxWin.toLocaleString();
@@ -2317,6 +2206,7 @@
                 totalWinsElement.textContent = playerStats.totalWins;
                 totalProfitElement.textContent = '+' + playerStats.totalProfit.toLocaleString();
                 
+                // Анимация для выигрыша
                 document.querySelectorAll('.cell.diamond').forEach(cell => {
                     cell.classList.add('pulse');
                 });
@@ -2333,6 +2223,7 @@
             startGameButton.innerHTML = '<i class="fas fa-play"></i> Начать игру';
             startGameButton.style.background = 'linear-gradient(to right, var(--primary), var(--accent))';
             
+            // Сохраняем статистику
             savePlayerStats();
         }
 
@@ -2346,6 +2237,7 @@
             const winAmount = Math.floor(currentBet * multiplier);
             balance += winAmount;
             
+            // Обновление статистики
             if (winAmount > playerStats.maxWin) {
                 playerStats.maxWin = winAmount;
                 maxWinElement.textContent = playerStats.maxWin.toLocaleString();
@@ -2369,14 +2261,16 @@
             startGameButton.innerHTML = '<i class="fas fa-play"></i> Начать игру';
             startGameButton.style.background = 'linear-gradient(to right, var(--primary), var(--accent))';
             
+            // Сброс поля
             document.querySelectorAll('.cell').forEach(cell => {
                 cell.className = 'cell';
             });
             
+            // Сохраняем статистику
             savePlayerStats();
         }
 
-        // Игра Краш - запуск ракеты
+        // Игра Краш - запуск ракеты (улучшенная версия)
         function startCrash() {
             if (crashGameActive) {
                 showNotification('Ракета уже в полете!', 'error');
@@ -2396,40 +2290,48 @@
             crashMultiplier = 1.0;
             cashoutMultiplier = 0;
             
-            const rocketIcon = document.getElementById('rocket-icon');
-            rocketIcon.innerHTML = '<i class="fas fa-rocket"></i>';
-            rocketIcon.style.transform = 'translateY(0) scale(1)';
-            rocketIcon.style.opacity = '1';
+            // Сброс ракеты и графика
+            rocketElement.classList.remove('rocket-fly');
+            rocketElement.style.transform = 'translateY(0) scale(1)';
+            rocketElement.style.opacity = '1';
+            graphLineElement.style.height = '0%';
             
+            // Запуск анимации ракеты
             setTimeout(() => {
-                rocketIcon.style.transition = 'transform 2s ease-out';
-                rocketIcon.style.transform = 'translateY(-100px) scale(1.2)';
+                rocketElement.classList.add('rocket-fly');
             }, 100);
             
-            const explosionPoint = 1.0 + Math.random() * 9;
+            // Определяем точку взрыва заранее (более честная система)
+            const explosionPoint = 1.0 + Math.random() * 9; // От 1.0x до 10.0x
             
+            // Запуск таймера игры
             let time = 0;
             
             crashInterval = setInterval(() => {
                 time++;
                 
+                // Плавный рост множителя
                 crashMultiplier = 1.0 + (time * 0.02);
                 
+                // Проверка достижения точки взрыва
                 if (crashMultiplier >= explosionPoint) {
                     endCrashGame(false);
                     return;
                 }
                 
-                document.getElementById('crash-multiplier').textContent = crashMultiplier.toFixed(2) + 'x';
+                // Обновление отображения
+                crashMultiplierElement.textContent = crashMultiplier.toFixed(2) + 'x';
+                graphLineElement.style.height = `${Math.min((crashMultiplier / 10) * 100, 100)}%`;
                 
+                // Максимальный множитель 50x
                 if (crashMultiplier >= 50) {
                     endCrashGame(true);
                 }
             }, 100);
             
-            document.getElementById('start-crash').disabled = true;
-            document.getElementById('start-crash').innerHTML = '<i class="fas fa-rocket"></i> В полете...';
-            document.getElementById('cash-out-crash').disabled = false;
+            startCrashButton.disabled = true;
+            startCrashButton.innerHTML = '<i class="fas fa-rocket"></i> В полете...';
+            cashOutCrashButton.disabled = false;
             
             showNotification('Ракета запущена! Заберите выигрыш до взрыва.', 'info');
         }
@@ -2454,12 +2356,13 @@
         function endCrashGame(isWin) {
             clearInterval(crashInterval);
             crashGameActive = false;
-            document.getElementById('cash-out-crash').disabled = true;
+            cashOutCrashButton.disabled = true;
             
             if (isWin && cashoutMultiplier > 0) {
                 const winAmount = Math.floor(crashBet * cashoutMultiplier);
                 balance += winAmount;
                 
+                // Обновление статистики
                 if (winAmount > playerStats.maxWin) {
                     playerStats.maxWin = winAmount;
                     maxWinElement.textContent = playerStats.maxWin.toLocaleString();
@@ -2470,8 +2373,8 @@
                 
                 showNotification(`Вы забрали ${winAmount} FCOINS (${cashoutMultiplier.toFixed(2)}x)!`, 'success');
             } else if (!isWin) {
-                const rocketIcon = document.getElementById('rocket-icon');
-                rocketIcon.innerHTML = '💥';
+                // Ракета взорвалась
+                rocketElement.innerHTML = '💥';
                 playerStats.totalProfit -= crashBet;
                 totalProfitElement.textContent = '+' + playerStats.totalProfit.toLocaleString();
                 showNotification(`Ракета взорвалась на ${crashMultiplier.toFixed(2)}x! Вы проиграли ${crashBet} FCOINS.`, 'error');
@@ -2479,20 +2382,23 @@
             
             updateBalance();
             
+            // Сброс кнопки
             setTimeout(() => {
-                document.getElementById('start-crash').disabled = false;
-                document.getElementById('start-crash').innerHTML = '<i class="fas fa-rocket"></i> Запустить ракету';
-                const rocketIcon = document.getElementById('rocket-icon');
-                rocketIcon.innerHTML = '<i class="fas fa-rocket"></i>';
-                rocketIcon.style.transform = 'translateY(0) scale(1)';
-                rocketIcon.style.opacity = '1';
-                document.getElementById('crash-multiplier').textContent = '1.00x';
+                startCrashButton.disabled = false;
+                startCrashButton.innerHTML = '<i class="fas fa-rocket"></i> Запустить ракету';
+                rocketElement.innerHTML = '🚀';
+                rocketElement.classList.remove('rocket-fly');
+                rocketElement.style.transform = 'translateY(0) scale(1)';
+                rocketElement.style.opacity = '1';
+                graphLineElement.style.height = '0%';
+                crashMultiplierElement.textContent = '1.00x';
             }, 2000);
             
+            // Сохраняем статистику
             savePlayerStats();
         }
 
-        // Игра Рулетка - крутить
+        // Игра Рулетка - крутить (улучшенная версия)
         function spinRoulette() {
             if (rouletteSpinning) return;
             
@@ -2506,21 +2412,33 @@
             saveBalanceToServer();
             
             rouletteSpinning = true;
-            document.getElementById('spin-roulette').disabled = true;
-            document.getElementById('spin-roulette').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Крутится...';
+            spinRouletteButton.disabled = true;
+            spinRouletteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Крутится...';
             
-            const result = Math.floor(Math.random() * 37);
+            // Определяем результат заранее
+            const result = Math.floor(Math.random() * 37); // 0-36
             const isRed = result !== 0 && [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36].includes(result);
             const isBlack = result !== 0 && !isRed;
             
+            // Рассчитываем угол для остановки на нужном числе
             const targetAngle = 3600 + (result * (360 / 37));
             
+            // Сброс вращения (только для офлайн рулетки)
+            if (wheelNumbersElement) {
+                wheelNumbersElement.style.transition = 'none';
+                wheelNumbersElement.style.transform = 'rotate(0deg)';
+            }
+            
+            // Запуск вращения
             setTimeout(() => {
-                const wheel = document.getElementById('roulette-wheel');
-                wheel.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.3, 1)';
-                wheel.style.transform = `rotate(${targetAngle}deg)`;
+                if (wheelNumbersElement) {
+                    wheelNumbersElement.style.transition = 'transform 5s cubic-bezier(0.2, 0.8, 0.3, 1)';
+                    wheelNumbersElement.style.transform = `rotate(${targetAngle}deg)`;
+                }
                 
+                // Результат после вращения
                 setTimeout(() => {
+                    // Определение выигрыша
                     let winMultiplier = 0;
                     if (selectedBet === 'red' && isRed) winMultiplier = 2;
                     if (selectedBet === 'black' && isBlack) winMultiplier = 2;
@@ -2530,6 +2448,7 @@
                         const winAmount = rouletteBet * winMultiplier;
                         balance += winAmount;
                         
+                        // Обновление статистики
                         if (winAmount > playerStats.maxWin) {
                             playerStats.maxWin = winAmount;
                             maxWinElement.textContent = playerStats.maxWin.toLocaleString();
@@ -2547,12 +2466,14 @@
                     
                     updateBalance();
                     
+                    // Сброс кнопки
                     setTimeout(() => {
                         rouletteSpinning = false;
-                        document.getElementById('spin-roulette').disabled = false;
-                        document.getElementById('spin-roulette').innerHTML = '<i class="fas fa-dice"></i> Крутить рулетку';
+                        spinRouletteButton.disabled = false;
+                        spinRouletteButton.innerHTML = '<i class="fas fa-dice"></i> Крутить рулетку';
                     }, 1000);
                     
+                    // Сохраняем статистику
                     savePlayerStats();
                 }, 5000);
             }, 50);
@@ -2576,20 +2497,24 @@
             document.getElementById('spin-slots').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Крутится...';
             document.getElementById('slots-result').textContent = '';
             
+            // Получаем элементы барабанов
             const slot1 = document.getElementById('slot-1');
             const slot2 = document.getElementById('slot-2');
             const slot3 = document.getElementById('slot-3');
             
+            // Добавляем анимацию вращения
             slot1.classList.add('spinning');
             slot2.classList.add('spinning');
             slot3.classList.add('spinning');
             
+            // Определяем результаты
             const results = [
                 slotSymbols[Math.floor(Math.random() * slotSymbols.length)],
                 slotSymbols[Math.floor(Math.random() * slotSymbols.length)],
                 slotSymbols[Math.floor(Math.random() * slotSymbols.length)]
             ];
             
+            // Останавливаем барабаны по очереди
             setTimeout(() => {
                 slot1.classList.remove('spinning');
                 slot1.textContent = results[0];
@@ -2604,6 +2529,7 @@
                 slot3.classList.remove('spinning');
                 slot3.textContent = results[2];
                 
+                // Проверяем выигрыш
                 const combination = results.join('');
                 const payout = slotPayouts[combination];
                 
@@ -2612,6 +2538,7 @@
                         const winAmount = slotsBet * payout;
                         balance += winAmount;
                         
+                        // Обновление статистики
                         if (winAmount > playerStats.maxWin) {
                             playerStats.maxWin = winAmount;
                             maxWinElement.textContent = playerStats.maxWin.toLocaleString();
@@ -2633,21 +2560,25 @@
                     
                     updateBalance();
                     
+                    // Сброс кнопки
                     slotsSpinning = false;
                     document.getElementById('spin-slots').disabled = false;
                     document.getElementById('spin-slots').innerHTML = '<i class="fas fa-play"></i> Крутить слоты';
                     
+                    // Сохраняем статистику
                     savePlayerStats();
                 }, 500);
             }, 2000);
         }
 
-        // Обновление баланса
+        // Обновление баланса (только отображение, БЕЗ отправки на сервер!)
         function updateBalance() {
             balanceElement.textContent = balance.toLocaleString();
+            // НЕ сохраняем в localStorage - баланс только из БД через WebSocket!
+            // НЕ отправляем на сервер - это создает петлю обновлений!
         }
         
-        // Сохранение баланса на сервер
+        // Сохранение баланса на сервер (вызывается только после игр)
         function saveBalanceToServer() {
             if (currentUser.telegramId && isConnected) {
                 sendToServer({
@@ -2679,6 +2610,16 @@
                 notification.classList.remove('show');
             }, 3000);
         }
+        
+        // Показ нотификации обновления
+        function showUpdateNotification() {
+            document.getElementById('update-notification').style.display = 'block';
+        }
+        
+        // Перезагрузка приложения
+        function reloadApp() {
+            window.location.reload();
+        }
 
         // Подключение к WebSocket
         function connectWebSocket() {
@@ -2693,6 +2634,7 @@
                 console.log('✅ WebSocket подключен');
                 isConnected = true;
                 
+                // Авторизуемся
                 if (currentUser.telegramId) {
                     const authData = {
                         type: 'auth',
@@ -2702,7 +2644,10 @@
                         last_name: currentUser.name.split(' ')[1] || '',
                         photo_url: currentUser.avatar
                     };
+                    console.log('Отправка авторизации:', authData);
                     ws.send(JSON.stringify(authData));
+                } else {
+                    console.warn('⚠️ telegramId не установлен, авторизация не отправлена');
                 }
                 
                 if (reconnectInterval) {
@@ -2724,6 +2669,7 @@
                 console.log('❌ WebSocket отключен');
                 isConnected = false;
                 
+                // Переподключение через 3 секунды
                 if (!reconnectInterval) {
                     reconnectInterval = setInterval(() => {
                         console.log('🔄 Попытка переподключения...');
@@ -2744,12 +2690,14 @@
                     handleAuthSuccess(data.user);
                     break;
                 case 'balance_updated':
+                    // Обновляем баланс только если он действительно изменился
                     if (balance !== data.balance) {
                         balance = data.balance;
                         balanceElement.textContent = balance.toLocaleString();
                     }
                     break;
                 case 'balance_changed':
+                    // Админ изменил баланс
                     balance = data.new_balance;
                     balanceElement.textContent = balance.toLocaleString();
                     showNotification(`Баланс изменен на ${data.change > 0 ? '+' : ''}${data.change} FCOINS`, data.change > 0 ? 'success' : 'error');
@@ -2787,8 +2735,56 @@
                     balanceElement.textContent = balance.toLocaleString();
                     showNotification(`Ежедневный бонус получен: +${data.amount.toLocaleString()} FCOINS!`, 'success');
                     break;
+                case 'rocket_new_round':
+                    handleRocketNewRound(data);
+                    break;
+                case 'rocket_started':
+                    handleRocketStarted(data);
+                    break;
+                case 'rocket_multiplier_update':
+                    handleRocketMultiplierUpdate(data);
+                    break;
+                case 'rocket_crashed':
+                    handleRocketCrashed(data);
+                    break;
+                case 'rocket_win':
+                    balance += data.amount;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Ракета: выигрыш ${data.amount} FCOINS (${data.multiplier.toFixed(2)}x)!`, 'success');
+                    break;
+                case 'rocket_cashout_success':
+                    showNotification(`Забрано ${data.amount} FCOINS на ${data.multiplier.toFixed(2)}x!`, 'success');
+                    break;
+                case 'roulette_new_round':
+                    handleRouletteNewRound(data);
+                    break;
+                case 'roulette_started':
+                    handleRouletteStarted(data);
+                    break;
+                case 'roulette_result':
+                    handleRouletteResult(data);
+                    break;
+                case 'roulette_win':
+                    balance += data.amount;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Рулетка: выигрыш ${data.amount} FCOINS (x${data.multiplier})!`, 'success');
+                    break;
                 case 'online_count':
                     document.getElementById('online-count').textContent = data.count;
+                    break;
+                case 'transaction_status_updated':
+                    // Обновляем список транзакций при изменении статуса
+                    loadTransactions();
+                    showNotification('Статус транзакции обновлен', 'success');
+                    break;
+                case 'withdraw_request':
+                    // Обновляем баланс после вывода
+                    balance = data.new_balance;
+                    balanceElement.textContent = balance.toLocaleString();
+                    break;
+                case 'update_available':
+                    // Показываем нотификацию обновления
+                    showUpdateNotification();
                     break;
                 default:
                     console.log('Неизвестное сообщение:', data);
@@ -2805,10 +2801,12 @@
             currentUser.verified = user.verified === 1;
             currentUser.isFounder = user.is_founder === 1;
             
+            // Устанавливаем баланс ОДИН РАЗ при авторизации
             balance = user.balance;
             balanceElement.textContent = balance.toLocaleString();
             updateUserProfile();
             
+            // Загружаем бейджи
             if (user.badges) {
                 user.badges.forEach(badge => {
                     const badgeElement = document.getElementById(`badge-${badge}`);
@@ -2818,12 +2816,14 @@
                 });
             }
             
+            // Показываем админ-панель только основателю
             if (currentUser.isFounder) {
-                adminAccessBtn.style.display = 'flex';
+                document.getElementById('admin-access-btn').style.display = 'flex';
             } else {
-                adminAccessBtn.style.display = 'none';
+                document.getElementById('admin-access-btn').style.display = 'none';
             }
             
+            // Проверяем FN-Live блокировку
             if (user.fnLiveBlock && user.fnLiveBlock.blocked) {
                 currentUser.fnLiveBlock = user.fnLiveBlock;
                 showFNLiveBlock(user.fnLiveBlock.reason, user.fnLiveBlock.blockedUntil);
@@ -2835,6 +2835,302 @@
             showNotification(`Добро пожаловать, ${currentUser.name}!`, 'success');
         }
         
+        // Глобальные переменные для онлайн игр и FN-Live
+        let fnLiveBlockTimer = null;
+        
+        // Переключиться на профиль
+        function switchToProfile() {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.querySelector('[data-section="profile-section"]').classList.add('active');
+            document.getElementById('profile-section').classList.add('active');
+            loadTransactions();
+        }
+        
+        // Заблокировать все игры
+        function blockAllGames() {
+            // Блокируем все кнопки игр кроме профиля
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.dataset.section !== 'profile-section') {
+                    item.style.pointerEvents = 'none';
+                    item.style.opacity = '0.5';
+                }
+            });
+        }
+        
+        // Разблокировать все игры
+        function unblockAllGames() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.style.pointerEvents = 'auto';
+                item.style.opacity = '1';
+            });
+        }
+        
+        // Показать FN-Live блокировку с таймером
+        function showFNLiveBlock(reason, blockedUntil, duration) {
+            const overlay = document.getElementById('fn-live-overlay');
+            const reasonElement = document.getElementById('fn-live-reason');
+            
+            // Сохраняем информацию о блокировке
+            currentUser.fnLiveBlock = {
+                blocked: true,
+                reason: reason,
+                blockedUntil: blockedUntil,
+                duration: duration,
+                shown: localStorage.getItem('fnLiveBlockShown') === 'true'
+            };
+            
+            // Показываем overlay только если еще не показывали
+            if (!currentUser.fnLiveBlock.shown) {
+                reasonElement.textContent = reason;
+                overlay.classList.add('active');
+                localStorage.setItem('fnLiveBlockShown', 'true');
+                
+                // Через 5 секунд скрываем overlay и перекидываем на профиль
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                    switchToProfile();
+                }, 5000);
+            } else {
+                // Если уже показывали, сразу перекидываем на профиль
+                switchToProfile();
+            }
+            
+            // Блокируем все игры
+            blockAllGames();
+            
+            // Обновляем статус в профиле
+            updateFNLiveStatus();
+            
+            // Запускаем таймер обратного отсчета
+            if (blockedUntil) {
+                startFNLiveTimer(blockedUntil);
+            }
+        }
+        
+        // Скрыть FN-Live блокировку
+        function hideFNLiveBlock() {
+            const overlay = document.getElementById('fn-live-overlay');
+            overlay.classList.remove('active');
+            
+            currentUser.fnLiveBlock = { blocked: false };
+            localStorage.removeItem('fnLiveBlockShown');
+            
+            if (fnLiveBlockTimer) {
+                clearInterval(fnLiveBlockTimer);
+                fnLiveBlockTimer = null;
+            }
+            
+            unblockAllGames();
+            updateFNLiveStatus();
+        }
+        
+        // Таймер FN-Live блокировки
+        function startFNLiveTimer(blockedUntil) {
+            if (fnLiveBlockTimer) clearInterval(fnLiveBlockTimer);
+            
+            // Проверяем сразу не истекла ли блокировка
+            const now = new Date();
+            const endTime = new Date(blockedUntil);
+            const timeLeft = endTime - now;
+            
+            if (timeLeft <= 0) {
+                // Блокировка уже истекла, снимаем её
+                hideFNLiveBlock();
+                showNotification('Блокировка FN-Live снята!', 'success');
+                return;
+            }
+            
+            fnLiveBlockTimer = setInterval(() => {
+                const now = new Date();
+                const endTime = new Date(blockedUntil);
+                const timeLeft = endTime - now;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(fnLiveBlockTimer);
+                    hideFNLiveBlock();
+                    showNotification('Блокировка FN-Live снята!', 'success');
+                } else {
+                    // Обновляем отображение времени в overlay
+                    const minutes = Math.floor(timeLeft / 60000);
+                    const seconds = Math.floor((timeLeft % 60000) / 1000);
+                    const reasonElement = document.getElementById('fn-live-reason');
+                    if (reasonElement) {
+                        reasonElement.textContent = 
+                            `${currentUser.fnLiveBlock.reason}\n\nОсталось: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                    
+                    // Обновляем статус в профиле
+                    updateFNLiveStatus();
+                }
+            }, 1000);
+        }
+        
+        // Обновить статус FN-Live в профиле
+        function updateFNLiveStatus() {
+            const statusDisplay = document.getElementById('fn-live-status-display');
+            
+            if (currentUser.fnLiveBlock && currentUser.fnLiveBlock.blocked) {
+                const endTime = new Date(currentUser.fnLiveBlock.blockedUntil);
+                const now = new Date();
+                const timeLeft = endTime - now;
+                const minutes = Math.floor(timeLeft / 60000);
+                
+                statusDisplay.style.background = 'linear-gradient(135deg, #ff4444, #cc0000)';
+                statusDisplay.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 10px;"><i class="fas fa-ban"></i></div>
+                    <div style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">FN-Live Блокировка</div>
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">${currentUser.fnLiveBlock.reason}</div>
+                    <div style="font-size: 16px; font-weight: 600;">Осталось: ${minutes} минут</div>
+                `;
+            } else {
+                statusDisplay.style.background = 'linear-gradient(135deg, #4caf50, #2e7d32)';
+                statusDisplay.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 10px;"><i class="fas fa-shield-alt"></i></div>
+                    <div style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">Все хорошо</div>
+                    <div style="font-size: 14px; opacity: 0.9;">Ваш аккаунт в безопасности</div>
+                `;
+            }
+        }
+        
+        // Обработка технического перерыва
+        function handleMaintenanceMode(enabled, message) {
+            // Основатель не видит технический перерыв
+            if (currentUser.isFounder) {
+                console.log('Технический перерыв активен, но вы основатель - можете продолжать работу');
+                return;
+            }
+            
+            const overlay = document.getElementById('maintenance-overlay');
+            const messageElement = document.getElementById('maintenance-message');
+            
+            if (enabled) {
+                messageElement.textContent = message || 'Игры временно недоступны';
+                overlay.style.display = 'flex';
+                localStorage.setItem('maintenanceMode', 'true');
+                
+                // Блокируем все игры
+                document.querySelectorAll('.btn-primary').forEach(btn => {
+                    if (!btn.id.includes('admin')) {
+                        btn.disabled = true;
+                    }
+                });
+            } else {
+                overlay.style.display = 'none';
+                localStorage.removeItem('maintenanceMode');
+                
+                // Разблокируем игры
+                document.querySelectorAll('.btn-primary').forEach(btn => {
+                    btn.disabled = false;
+                });
+                
+                showNotification(message || 'Технический перерыв завершен!', 'success');
+            }
+        }
+        
+        // Обновление системного статуса
+        function updateSystemStatus(settings) {
+            // Обновляем статус FN-Live системы
+            const fnLiveStatus = document.getElementById('fn-live-system-status');
+            if (settings.fnLiveActive) {
+                fnLiveStatus.style.background = 'linear-gradient(135deg, #4caf50, #2e7d32)';
+                fnLiveStatus.innerHTML = '<i class="fas fa-shield-alt"></i><span>FN-Live активен</span>';
+            } else {
+                fnLiveStatus.style.background = 'linear-gradient(135deg, #ff9800, #f57c00)';
+                fnLiveStatus.innerHTML = '<i class="fas fa-shield-alt"></i><span>FN-Live неактивен</span>';
+            }
+            
+            // Обновляем технический перерыв
+            if (settings.maintenanceMode) {
+                handleMaintenanceMode(true, 'Технический перерыв');
+            }
+        }
+        
+        // Отправка данных на сервер
+        function sendToServer(data) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(data));
+            } else {
+                console.error('WebSocket не подключен');
+            }
+        }
+        
+        // Загрузка бейджей пользователя
+        function loadUserBadges() {
+            // Запрашиваем обновленные данные пользователя
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'auth',
+                    telegram_id: currentUser.telegramId,
+                    username: currentUser.username,
+                    first_name: currentUser.name.split(' ')[0],
+                    last_name: currentUser.name.split(' ')[1] || '',
+                    photo_url: currentUser.avatar
+                }));
+            }
+        }
+
+        // Загрузка Telegram профиля
+        function loadTelegramProfile() {
+            // Проверяем, доступен ли Telegram Web App API
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const tgUser = tg.initDataUnsafe.user;
+                
+                // Получаем данные из Telegram
+                const telegramProfile = {
+                    id: tgUser.id,
+                    name: tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : ''),
+                    username: tgUser.username || 'user' + tgUser.id,
+                    avatar: tgUser.photo_url || `https://i.pravatar.cc/150?img=${tgUser.id % 70}`
+                };
+                
+                // Сохраняем профиль
+                localStorage.setItem('frnmines_telegram_profile', JSON.stringify(telegramProfile));
+                
+                // Обновляем текущего пользователя
+                currentUser.name = telegramProfile.name;
+                currentUser.username = telegramProfile.username;
+                currentUser.avatar = telegramProfile.avatar;
+                currentUser.telegramId = telegramProfile.id;
+                currentUser.id = telegramProfile.id;
+                
+                updateUserProfile();
+                showNotification(`Добро пожаловать, ${currentUser.name}!`, 'success');
+                
+                // Расширяем приложение на весь экран
+                tg.expand();
+                
+                return;
+            }
+            
+            // Проверяем, есть ли сохраненный профиль Telegram
+            const savedTelegramProfile = localStorage.getItem('frnmines_telegram_profile');
+            
+            if (savedTelegramProfile) {
+                try {
+                    const telegramProfile = JSON.parse(savedTelegramProfile);
+                    
+                    // Обновляем профиль данными из Telegram
+                    currentUser.name = telegramProfile.name || currentUser.name;
+                    currentUser.username = telegramProfile.username || currentUser.username;
+                    currentUser.avatar = telegramProfile.avatar || currentUser.avatar;
+                    currentUser.telegramId = telegramProfile.id || currentUser.telegramId;
+                    
+                    // Обновляем отображение
+                    updateUserProfile();
+                    
+                    showNotification(`Добро пожаловать, ${currentUser.name}!`, 'success');
+                } catch (e) {
+                    console.error('Ошибка загрузки профиля Telegram:', e);
+                    updateUserProfile();
+                }
+            } else {
+                // Нет сохраненного профиля Telegram, используем тестовый
+                updateUserProfile();
+                showNotification('Тестовый режим. Откройте через Telegram для полного функционала.', 'info');
+            }
+        }
+
         // Обновление отображения профиля пользователя
         function updateUserProfile() {
             usernameElement.textContent = currentUser.name;
@@ -2850,7 +3146,29 @@
                 document.getElementById('badge-verified').classList.remove('active');
             }
             
+            // Сохраняем пользователя
             localStorage.setItem('frnmines_user', JSON.stringify(currentUser));
+        }
+
+        // Загрузка промокодов из "файла" (localStorage имитирует promocodes.txt)
+        function loadPromoCodes() {
+            const saved = localStorage.getItem('frnmines_promocodes');
+            if (saved) {
+                promoCodes = JSON.parse(saved);
+            } else {
+                // Стандартные промокоды
+                promoCodes = {
+                    'WELCOME500': {amount: 500, used: false},
+                    'MINES1000': {amount: 1000, used: false},
+                    'BONUS2024': {amount: 1500, used: false}
+                };
+                savePromoCodes();
+            }
+        }
+
+        // Сохранение промокодов в "файл" (localStorage имитирует promocodes.txt)
+        function savePromoCodes() {
+            localStorage.setItem('frnmines_promocodes', JSON.stringify(promoCodes));
         }
 
         // Загрузка статистики игрока
@@ -2875,8 +3193,89 @@
             maxMultiplierStatElement.textContent = playerStats.maxMultiplier.toFixed(1) + 'x';
         }
 
+        // Загрузка списка пользователей в админ-панели
+        async function loadUserList() {
+            const userListElement = document.getElementById('user-list');
+            
+            try {
+                const response = await fetch('/api/users');
+                const users = await response.json();
+                
+                // Отображаем пользователей
+                userListElement.innerHTML = '';
+                users.forEach(user => {
+                    const lastActive = new Date(user.last_active).toLocaleString('ru-RU');
+                    const userItem = document.createElement('div');
+                    userItem.className = 'user-item';
+                    userItem.innerHTML = `
+                        <div>
+                            <strong>${user.first_name} ${user.last_name || ''}</strong> (@${user.username})
+                            <br>
+                            <small style="color: var(--gray);">
+                                TG ID: ${user.telegram_id} | Баланс: ${user.balance.toLocaleString()} FCOINS
+                            </small>
+                            <br>
+                            <small style="color: var(--gray);">Последняя активность: ${lastActive}</small>
+                            ${user.verified ? '<br><small style="color: var(--success);"><i class="fas fa-check-circle"></i> Верифицирован</small>' : ''}
+                            ${user.is_founder ? '<br><small style="color: var(--warning);"><i class="fas fa-crown"></i> Основатель</small>' : ''}
+                        </div>
+                        <div style="display: flex; gap: 5px; flex-direction: column;">
+                            <button class="bet-btn" data-user-id="${user.telegram_id}" data-username="${user.username || ''}" onclick="selectUserForAdmin(this.dataset.userId, this.dataset.username)" title="Выбрать">
+                                <i class="fas fa-user-edit"></i>
+                            </button>
+                            <button class="bet-btn" onclick="fnLiveBlockUser(${user.telegram_id})" title="FN-Live блокировка" style="background: var(--danger);">
+                                <i class="fas fa-shield-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                    userListElement.appendChild(userItem);
+                });
+            } catch (err) {
+                console.error('Ошибка загрузки пользователей:', err);
+                userListElement.innerHTML = '<p style="color: var(--danger); padding: 15px;">Ошибка загрузки пользователей</p>';
+            }
+        }
+        
+        // Выбор пользователя для админских действий (глобальная функция)
+        window.selectUserForAdmin = function(telegramId, username) {
+            document.getElementById('admin-user').value = telegramId;
+            document.getElementById('admin-username-badge').value = telegramId;
+            document.getElementById('fn-live-user-id').value = telegramId;
+            showNotification(`Выбран пользователь: @${username} (ID: ${telegramId})`, 'info');
+        };
+        
+        // FN-Live блокировка пользователя (глобальная функция)
+        window.fnLiveBlockUser = async function(telegramId) {
+            if (!confirm(`Заблокировать игру для пользователя ${telegramId}?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/fn-live-block', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        admin_id: currentUser.telegramId,
+                        user_id: telegramId,
+                        reason: 'Система FN-Live посчитала ваши действия необычными'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('FN-Live блокировка отправлена!', 'success');
+                } else {
+                    showNotification(result.message || 'Ошибка блокировки', 'error');
+                }
+            } catch (err) {
+                showNotification('Ошибка отправки блокировки', 'error');
+            }
+        };
+
         // Инициализация админ панели
         function initAdminPanel() {
+            // Кнопка доступа к админ-панели в профиле (только для основателя)
             adminAccessBtn.addEventListener('click', () => {
                 if (currentUser.isFounder) {
                     adminPanel.classList.add('active');
@@ -2890,26 +3289,418 @@
                 adminPanel.classList.remove('active');
             });
             
-            // Показать/скрыть мины (админ функция)
-            showMinesBtn.addEventListener('click', () => {
-                if (!gameActive) {
-                    showNotification('Нет активной игры', 'error');
+            // Обновить список пользователей
+            document.getElementById('refresh-users').addEventListener('click', () => {
+                loadUserList();
+                showNotification('Список пользователей обновлен', 'info');
+            });
+            
+            // Отправить сообщение всем
+            sendAllButton.addEventListener('click', async () => {
+                const message = adminMessageElement.value;
+                if (!message) {
+                    showNotification('Введите текст сообщения!', 'error');
                     return;
                 }
                 
-                minePositions.forEach(pos => {
-                    const cell = document.querySelector(`.cell[data-index="${pos}"]`);
-                    cell.style.outline = '3px solid red';
-                    cell.style.outlineOffset = '-3px';
-                });
-                
-                showNotification('Мины подсвечены красным', 'admin');
+                try {
+                    const response = await fetch('/api/admin/broadcast', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            message: message
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Сообщение отправлено всем онлайн пользователям!', 'success');
+                        adminMessageElement.value = '';
+                    } else {
+                        showNotification('Ошибка отправки сообщения', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка отправки сообщения', 'error');
+                }
             });
             
-            hideMinesBtn.addEventListener('click', () => {
-                document.querySelectorAll('.cell').forEach(cell => {
-                    cell.style.outline = 'none';
-                });
+            // Выдать бейдж
+            giveBadgeButton.addEventListener('click', async () => {
+                const userId = document.getElementById('admin-username-badge').value;
+                const badge = document.getElementById('badge-select').value;
+                
+                if (!userId) {
+                    showNotification('Выберите пользователя', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/give-badge', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: parseInt(userId),
+                            badge_type: badge
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(`Бейдж "${badge}" выдан пользователю!`, 'success');
+                        document.getElementById('admin-username-badge').value = '';
+                    } else {
+                        showNotification('Ошибка выдачи бейджа', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка выдачи бейджа', 'error');
+                }
+            });
+            
+            // Добавить промокод
+            addPromoButton.addEventListener('click', async () => {
+                const code = document.getElementById('promo-code-input').value.toUpperCase();
+                const amount = parseInt(document.getElementById('promo-amount').value);
+                
+                if (!code || !amount) {
+                    showNotification('Заполните все поля', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/add-promo', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            code: code,
+                            amount: amount
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(`Промокод ${code} на сумму ${amount} FCOINS добавлен в БД`, 'success');
+                        document.getElementById('promo-code-input').value = '';
+                        document.getElementById('promo-amount').value = '';
+                    } else {
+                        showNotification('Ошибка добавления промокода', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка добавления промокода', 'error');
+                }
+            });
+            
+            // Изменить баланс
+            addBalanceButton.addEventListener('click', async () => {
+                const userId = document.getElementById('admin-user').value;
+                const amount = parseInt(document.getElementById('balance-change').value);
+                
+                if (!userId || !amount) {
+                    showNotification('Заполните все поля', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/change-balance', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: parseInt(userId),
+                            amount: amount
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(`${amount} FCOINS добавлены пользователю!`, 'success');
+                        document.getElementById('admin-user').value = '';
+                        document.getElementById('balance-change').value = '';
+                        loadUserList();
+                    } else {
+                        showNotification('Ошибка изменения баланса', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка изменения баланса', 'error');
+                }
+            });
+            
+            removeBalanceButton.addEventListener('click', async () => {
+                const userId = document.getElementById('admin-user').value;
+                const amount = parseInt(document.getElementById('balance-change').value);
+                
+                if (!userId || !amount) {
+                    showNotification('Заполните все поля', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/change-balance', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: parseInt(userId),
+                            amount: -amount
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(`${amount} FCOINS списаны у пользователя!`, 'success');
+                        document.getElementById('admin-user').value = '';
+                        document.getElementById('balance-change').value = '';
+                        loadUserList();
+                    } else {
+                        showNotification('Ошибка изменения баланса', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка изменения баланса', 'error');
+                }
+            });
+            
+            // FN-Live блокировка
+            document.getElementById('fn-live-block-btn').addEventListener('click', async () => {
+                const userId = document.getElementById('fn-live-user-id').value;
+                const duration = parseInt(document.getElementById('fn-live-duration').value) || 10;
+                const reason = document.getElementById('fn-live-reason').value || 'Система FN-Live посчитала ваши действия необычными';
+                
+                if (!userId) {
+                    showNotification('Введите Telegram ID пользователя', 'error');
+                    return;
+                }
+                
+                if (!confirm(`Заблокировать игру для пользователя ${userId} на ${duration} минут?`)) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/fn-live-block', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: parseInt(userId),
+                            duration: duration,
+                            reason: reason
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(`FN-Live блокировка на ${duration} минут отправлена!`, 'success');
+                        document.getElementById('fn-live-user-id').value = '';
+                        document.getElementById('fn-live-reason').value = '';
+                    } else {
+                        showNotification(result.message || 'Ошибка блокировки', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка отправки блокировки', 'error');
+                }
+            });
+            
+            // Снятие FN-Live блокировки
+            document.getElementById('fn-live-unblock-btn').addEventListener('click', async () => {
+                const userId = document.getElementById('fn-live-user-id').value;
+                
+                if (!userId) {
+                    showNotification('Введите Telegram ID пользователя', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/fn-live-unblock', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: parseInt(userId)
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Блокировка снята!', 'success');
+                        document.getElementById('fn-live-user-id').value = '';
+                    } else {
+                        showNotification('Ошибка снятия блокировки', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка', 'error');
+                }
+            });
+            
+            // Добавление транзакции
+            document.getElementById('add-transaction-btn').addEventListener('click', async () => {
+                const username = document.getElementById('transaction-username').value.trim();
+                const type = document.getElementById('transaction-type').value;
+                const amount = parseInt(document.getElementById('transaction-amount').value);
+                
+                if (!username) {
+                    showNotification('Введите имя пользователя', 'error');
+                    return;
+                }
+                
+                if (!amount || amount <= 0) {
+                    showNotification('Введите корректную сумму', 'error');
+                    return;
+                }
+                
+                try {
+                    // Сначала получаем список пользователей для поиска ID
+                    const usersResponse = await fetch('/api/users');
+                    const users = await usersResponse.json();
+                    const targetUser = users.find(u => u.username && u.username.toLowerCase() === username.toLowerCase());
+                    
+                    if (!targetUser) {
+                        showNotification('Пользователь не найден', 'error');
+                        return;
+                    }
+                    
+                    const response = await fetch('/api/admin/add-transaction', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            user_id: targetUser.telegram_id,
+                            type: type,
+                            amount: amount
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(`Транзакция добавлена! ${type === 'deposit' ? 'Пополнение' : 'Вывод'} ${amount} FCOINS`, 'success');
+                        document.getElementById('transaction-username').value = '';
+                        document.getElementById('transaction-amount').value = '';
+                    } else {
+                        showNotification(result.error || 'Ошибка добавления транзакции', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка добавления транзакции', 'error');
+                }
+            });
+            
+            // Изменение статуса транзакции
+            document.getElementById('update-status-btn').addEventListener('click', async () => {
+                const transactionId = parseInt(document.getElementById('transaction-id').value);
+                const status = document.getElementById('transaction-status').value;
+                
+                if (!transactionId) {
+                    showNotification('Введите ID транзакции', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/update-transaction-status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            transaction_id: transactionId,
+                            status: status
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(`Статус транзакции изменен на "${status}"`, 'success');
+                        document.getElementById('transaction-id').value = '';
+                    } else {
+                        showNotification(result.error || 'Ошибка изменения статуса', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка изменения статуса', 'error');
+                }
+            });
+            
+            // Технический перерыв
+            document.getElementById('maintenance-toggle').addEventListener('change', async (e) => {
+                const enabled = e.target.checked;
+                
+                try {
+                    const response = await fetch('/api/admin/maintenance', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            enabled: enabled,
+                            message: enabled ? 'Технический перерыв. Игры временно недоступны.' : 'Технический перерыв завершен!'
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка', 'error');
+                    e.target.checked = !enabled;
+                }
+            });
+            
+            // Переключатель FN-Live системы
+            document.getElementById('fn-live-toggle').addEventListener('change', async (e) => {
+                const enabled = e.target.checked;
+                
+                try {
+                    const response = await fetch('/api/admin/fn-live-toggle', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId,
+                            enabled: enabled
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification(result.message, 'success');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка', 'error');
+                    e.target.checked = !enabled;
+                }
+            });
+            
+            // Кнопка уведомления об обновлении
+            document.getElementById('notify-update-btn').addEventListener('click', async () => {
+                if (!confirm('Отправить уведомление об обновлении всем пользователям?')) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/admin/notify-update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            admin_id: currentUser.telegramId
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showNotification('Уведомление отправлено всем пользователям!', 'success');
+                    } else {
+                        showNotification(result.error || 'Ошибка отправки', 'error');
+                    }
+                } catch (err) {
+                    showNotification('Ошибка отправки уведомления', 'error');
+                }
             });
         }
 
@@ -2942,30 +3733,36 @@
         function init() {
             loadTheme();
             initGameGrid();
+            initRoulette();
             
             // Подключаемся к WebSocket
             connectWebSocket();
             
+            // Проверяем технический перерыв при загрузке (после небольшой задержки, чтобы isFounder успел установиться)
             setTimeout(() => {
                 if (localStorage.getItem('maintenanceMode') === 'true') {
                     handleMaintenanceMode(true, 'Технический перерыв');
                 }
             }, 1000);
             
+            // Загрузка данных
+            // Баланс загружается из БД через WebSocket, не из localStorage!
+            // Начальный баланс 10000 будет заменен на реальный после авторизации
+            
             updateBalance();
+            loadPromoCodes();
             loadPlayerStats();
+            loadTelegramProfile(); // Загружаем Telegram профиль
             initAdminPanel();
             
             // Установка даты регистрации
             const regDate = new Date();
-            regDate.setDate(regDate.getDate() - 30);
+            regDate.setDate(regDate.getDate() - 30); // 30 дней назад
             regDateElement.textContent = regDate.toLocaleDateString('ru-RU');
             
             // Обновляем начальный множитель
             multiplier = calculateInitialMultiplier();
-            multiplierStep = calculateMultiplierStep();
             baseMultiplierElement.textContent = multiplier.toFixed(2) + 'x';
-            stepMultiplierElement.textContent = multiplierStep.toFixed(2) + 'x';
             updateMultiplier();
             updatePotentialWin();
             
@@ -2975,44 +3772,115 @@
                 minesValueElement.textContent = mineCount;
                 minesCountElement.textContent = mineCount;
                 
-                // Пересчитываем множители
-                multiplier = calculateInitialMultiplier();
+                // Пересчитываем шаг множителя при изменении количества мин
                 multiplierStep = calculateMultiplierStep();
-                baseMultiplierElement.textContent = multiplier.toFixed(2) + 'x';
-                stepMultiplierElement.textContent = multiplierStep.toFixed(2) + 'x';
-                updateMultiplier();
-                updatePotentialWin();
             });
             
             // Настройка кнопок ставки в Минах
             betDownButton.addEventListener('click', () => {
                 currentBet = Math.max(10, currentBet - 50);
                 betAmountElement.value = currentBet;
+                
+                // Пересчитываем начальный множитель
+                multiplier = calculateInitialMultiplier();
+                baseMultiplierElement.textContent = multiplier.toFixed(2) + 'x';
+                updateMultiplier();
                 updatePotentialWin();
             });
             
             betUpButton.addEventListener('click', () => {
                 currentBet = Math.min(100000, currentBet + 50);
                 betAmountElement.value = currentBet;
+                
+                // Пересчитываем начальный множитель
+                multiplier = calculateInitialMultiplier();
+                baseMultiplierElement.textContent = multiplier.toFixed(2) + 'x';
+                updateMultiplier();
                 updatePotentialWin();
             });
             
             betAmountElement.addEventListener('input', () => {
                 let value = betAmountElement.value;
+                // Разрешаем полное удаление для ввода новой суммы
                 if (value === '') {
                     currentBet = 0;
                     return;
                 }
                 currentBet = parseInt(value) || 10;
                 currentBet = Math.max(10, Math.min(100000, currentBet));
+                
+                // Пересчитываем начальный множитель
+                multiplier = calculateInitialMultiplier();
+                baseMultiplierElement.textContent = multiplier.toFixed(2) + 'x';
+                updateMultiplier();
                 updatePotentialWin();
             });
             
             betAmountElement.addEventListener('blur', () => {
+                // При потере фокуса устанавливаем минимум, если поле пустое
                 if (betAmountElement.value === '' || parseInt(betAmountElement.value) < 10) {
                     currentBet = 10;
                     betAmountElement.value = currentBet;
+                    multiplier = calculateInitialMultiplier();
+                    baseMultiplierElement.textContent = multiplier.toFixed(2) + 'x';
+                    updateMultiplier();
                     updatePotentialWin();
+                }
+            });
+            
+            // Настройка кнопок ставки в Краше
+            crashBetDownButton.addEventListener('click', () => {
+                crashBet = Math.max(10, crashBet - 50);
+                crashBetAmountElement.value = crashBet;
+            });
+            
+            crashBetUpButton.addEventListener('click', () => {
+                crashBet = Math.min(100000, crashBet + 50);
+                crashBetAmountElement.value = crashBet;
+            });
+            
+            crashBetAmountElement.addEventListener('input', () => {
+                let value = crashBetAmountElement.value;
+                if (value === '') {
+                    crashBet = 0;
+                    return;
+                }
+                crashBet = parseInt(value) || 10;
+                crashBet = Math.max(10, Math.min(100000, crashBet));
+            });
+            
+            crashBetAmountElement.addEventListener('blur', () => {
+                if (crashBetAmountElement.value === '' || parseInt(crashBetAmountElement.value) < 10) {
+                    crashBet = 10;
+                    crashBetAmountElement.value = crashBet;
+                }
+            });
+            
+            // Настройка кнопок ставки в Рулетке
+            rouletteBetDownButton.addEventListener('click', () => {
+                rouletteBet = Math.max(10, rouletteBet - 50);
+                rouletteBetAmountElement.value = rouletteBet;
+            });
+            
+            rouletteBetUpButton.addEventListener('click', () => {
+                rouletteBet = Math.min(100000, rouletteBet + 50);
+                rouletteBetAmountElement.value = rouletteBet;
+            });
+            
+            rouletteBetAmountElement.addEventListener('input', () => {
+                let value = rouletteBetAmountElement.value;
+                if (value === '') {
+                    rouletteBet = 0;
+                    return;
+                }
+                rouletteBet = parseInt(value) || 10;
+                rouletteBet = Math.max(10, Math.min(100000, rouletteBet));
+            });
+            
+            rouletteBetAmountElement.addEventListener('blur', () => {
+                if (rouletteBetAmountElement.value === '' || parseInt(rouletteBetAmountElement.value) < 10) {
+                    rouletteBet = 10;
+                    rouletteBetAmountElement.value = rouletteBet;
                 }
             });
             
@@ -3022,22 +3890,41 @@
             // Кнопка забрать выигрыш в Минах
             cashOutButton.addEventListener('click', cashOut);
             
-            // Кнопка начала игры в Краше
-            document.getElementById('start-crash').addEventListener('click', startCrash);
+            // Кнопка начала игры в Краше (онлайн ракета)
+            startCrashButton.addEventListener('click', placeRocketBet);
             
-            // Кнопка забрать выигрыш в Краше
-            document.getElementById('cash-out-crash').addEventListener('click', cashOutCrash);
+            // Кнопка забрать выигрыш в Краше (онлайн ракета)
+            cashOutCrashButton.addEventListener('click', cashoutRocket);
             
-            // Кнопка крутить рулетку
-            document.getElementById('spin-roulette').addEventListener('click', spinRoulette);
+            // Кнопка крутить рулетку (онлайн рулетка)
+            spinRouletteButton.addEventListener('click', placeRouletteBet);
             
-            // Настройка выбора ставки в рулетке
-            document.querySelectorAll('.bet-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.bet-option').forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedBet = this.dataset.bet;
-                });
+            // Настройка кнопок ставки в Слотах
+            document.getElementById('slots-bet-down').addEventListener('click', () => {
+                slotsBet = Math.max(10, slotsBet - 50);
+                document.getElementById('slots-bet-amount').value = slotsBet;
+            });
+            
+            document.getElementById('slots-bet-up').addEventListener('click', () => {
+                slotsBet = Math.min(100000, slotsBet + 50);
+                document.getElementById('slots-bet-amount').value = slotsBet;
+            });
+            
+            document.getElementById('slots-bet-amount').addEventListener('input', () => {
+                let value = document.getElementById('slots-bet-amount').value;
+                if (value === '') {
+                    slotsBet = 0;
+                    return;
+                }
+                slotsBet = parseInt(value) || 10;
+                slotsBet = Math.max(10, Math.min(100000, slotsBet));
+            });
+            
+            document.getElementById('slots-bet-amount').addEventListener('blur', () => {
+                if (document.getElementById('slots-bet-amount').value === '' || parseInt(document.getElementById('slots-bet-amount').value) < 10) {
+                    slotsBet = 10;
+                    document.getElementById('slots-bet-amount').value = slotsBet;
+                }
             });
             
             // Кнопка крутить слоты
@@ -3051,167 +3938,118 @@
                 item.addEventListener('click', () => {
                     const sectionId = item.dataset.section;
                     
+                    // Обновление активного элемента навигации
                     navItems.forEach(nav => nav.classList.remove('active'));
                     item.classList.add('active');
                     
+                    // Показ активной секции
                     contentSections.forEach(section => section.classList.remove('active'));
                     document.getElementById(sectionId).classList.add('active');
-                });
-            });
-            
-            // Кнопка истории операций
-            historyBtn.addEventListener('click', () => {
-                transactionsPanel.classList.add('active');
-                loadTransactions();
-            });
-            
-            closeTransactions.addEventListener('click', () => {
-                transactionsPanel.classList.remove('active');
-            });
-            
-            // Кнопка пополнения/вывода в шапке
-            transactionsBtn.addEventListener('click', () => {
-                depositWithdrawWindow.classList.add('active');
-            });
-            
-            closeDW.addEventListener('click', () => {
-                depositWithdrawWindow.classList.remove('active');
-            });
-            
-            // Переключение вкладок пополнения/вывода
-            dwTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabType = tab.dataset.tab;
                     
-                    dwTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    
-                    if (tabType === 'deposit') {
-                        depositTab.style.display = 'block';
-                        withdrawTab.style.display = 'none';
-                        dwTitle.textContent = 'Пополнение баланса';
-                    } else {
-                        depositTab.style.display = 'none';
-                        withdrawTab.style.display = 'block';
-                        dwTitle.textContent = 'Вывод средств';
+                    // Загрузка транзакций при открытии профиля
+                    if (sectionId === 'profile-section') {
+                        loadTransactions();
                     }
                 });
             });
             
-            // Пополнение баланса
-            submitDeposit.addEventListener('click', () => {
-                const amount = parseInt(depositAmount.value);
-                const method = document.getElementById('deposit-method').value;
-                
-                if (!amount || amount < 10) {
-                    showNotification('Минимальная сумма пополнения: 10 FCOINS', 'error');
-                    return;
-                }
-                
-                // Имитация пополнения
-                balance += amount;
-                updateBalance();
-                
-                // Добавляем транзакцию
-                const deposit = {
-                    id: Date.now(),
-                    amount: amount,
-                    method: method,
-                    date: new Date().toLocaleString('ru-RU'),
-                    status: 'Успешно'
-                };
-                
-                transactions.deposits.unshift(deposit);
-                saveTransactions();
-                showNotification(`Баланс пополнен на ${amount} FCOINS`, 'success');
-                
-                depositWithdrawWindow.classList.remove('active');
-                depositAmount.value = '';
-            });
+            // Кнопки транзакций
+            document.getElementById('deposit-btn').addEventListener('click', openDepositModal);
+            document.getElementById('withdraw-btn').addEventListener('click', openWithdrawModal);
             
-            // Вывод средств
-            submitWithdraw.addEventListener('click', () => {
-                const amount = parseInt(withdrawAmount.value);
-                const wallet = document.getElementById('withdraw-wallet').value;
-                const method = document.getElementById('withdraw-method').value;
-                
-                if (!amount || amount < 100) {
-                    showNotification('Минимальная сумма вывода: 100 FCOINS', 'error');
-                    return;
-                }
-                
-                if (!wallet) {
-                    showNotification('Введите номер карты/кошелька', 'error');
-                    return;
-                }
-                
-                if (amount > balance) {
-                    showNotification('Недостаточно средств для вывода', 'error');
-                    return;
-                }
-                
-                // Имитация вывода (в реальном проекте здесь будет запрос к платежной системе)
-                balance -= amount;
-                updateBalance();
-                
-                // Добавляем транзакцию
-                const withdrawal = {
-                    id: Date.now(),
-                    amount: amount,
-                    method: method,
-                    wallet: wallet,
-                    date: new Date().toLocaleString('ru-RU'),
-                    status: 'В обработке'
-                };
-                
-                transactions.withdrawals.unshift(withdrawal);
-                saveTransactions();
-                showNotification(`Заявка на вывод ${amount} FCOINS принята в обработку`, 'success');
-                
-                depositWithdrawWindow.classList.remove('active');
-                withdrawAmount.value = '';
-                document.getElementById('withdraw-wallet').value = '';
-            });
-            
-            // Ежедневный бонус
-            dailyBonusButton.addEventListener('click', () => {
-                const bonusAmount = 150;
-                balance += bonusAmount;
-                updateBalance();
-                showNotification(`Ежедневный бонус получен: +${bonusAmount} FCOINS!`, 'success');
-                
-                // Сохраняем время получения бонуса
-                localStorage.setItem('lastDailyBonus', Date.now().toString());
-                dailyBonusButton.disabled = true;
-                dailyBonusButton.innerHTML = '<i class="fas fa-check"></i> Бонус получен';
-                dailyBonusButton.style.background = 'var(--gray)';
-                
-                // Таймер на 24 часа
-                setTimeout(() => {
-                    dailyBonusButton.disabled = false;
-                    dailyBonusButton.innerHTML = '<i class="fas fa-gift"></i> Получить бонус';
-                    dailyBonusButton.style.background = 'linear-gradient(to right, var(--primary), var(--accent))';
-                    showNotification('Ежедневный бонус снова доступен!', 'success');
-                }, 24 * 60 * 60 * 1000);
-            });
-            
-            // Проверяем, можно ли получить бонус
-            const lastBonus = localStorage.getItem('lastDailyBonus');
-            if (lastBonus) {
-                const timeSinceLastBonus = Date.now() - parseInt(lastBonus);
-                if (timeSinceLastBonus < 24 * 60 * 60 * 1000) {
-                    dailyBonusButton.disabled = true;
-                    dailyBonusButton.innerHTML = '<i class="fas fa-clock"></i> Доступно позже';
-                    dailyBonusButton.style.background = 'var(--gray)';
+            // Вкладки фильтрации транзакций
+            document.querySelectorAll('.transaction-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    currentFilter = tab.dataset.filter;
                     
-                    const timeLeft = 24 * 60 * 60 * 1000 - timeSinceLastBonus;
-                    setTimeout(() => {
+                    // Обновляем активную вкладку
+                    document.querySelectorAll('.transaction-tab').forEach(t => {
+                        t.style.borderBottomColor = 'transparent';
+                        t.style.color = 'var(--gray)';
+                    });
+                    tab.style.borderBottomColor = 'var(--primary)';
+                    tab.style.color = 'var(--primary)';
+                    
+                    renderTransactions();
+                });
+            });
+            
+            // Обработка ежедневного бонуса
+            dailyBonusButton.addEventListener('click', async () => {
+                if (!currentUser.telegramId) {
+                    showNotification('Авторизуйтесь через Telegram', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/daily-bonus', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ telegram_id: currentUser.telegramId })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        balance = result.new_balance;
+                        balanceElement.textContent = balance.toLocaleString();
+                        showNotification(`Ежедневный бонус получен: +${result.amount.toLocaleString()} FCOINS!`, 'success');
+                        
+                        // Запускаем таймер до следующего бонуса
+                        startDailyBonusTimer(result.nextBonusIn);
+                    } else {
+                        showNotification(result.message, 'error');
+                        if (result.nextBonusIn) {
+                            startDailyBonusTimer(result.nextBonusIn);
+                        }
+                    }
+                } catch (err) {
+                    showNotification('Ошибка получения бонуса', 'error');
+                }
+            });
+            
+            // Проверяем доступность бонуса при загрузке
+            async function checkDailyBonus() {
+                if (!currentUser.telegramId) return;
+                
+                try {
+                    const response = await fetch(`/api/daily-bonus/check/${currentUser.telegramId}`);
+                    const result = await response.json();
+                    
+                    if (!result.available && result.nextBonusIn > 0) {
+                        startDailyBonusTimer(result.nextBonusIn);
+                    }
+                } catch (err) {
+                    console.error('Ошибка проверки бонуса:', err);
+                }
+            }
+            
+            // Таймер ежедневного бонуса
+            function startDailyBonusTimer(timeLeft) {
+                dailyBonusButton.disabled = true;
+                
+                if (dailyBonusTimer) clearInterval(dailyBonusTimer);
+                
+                dailyBonusTimer = setInterval(() => {
+                    timeLeft -= 1000;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(dailyBonusTimer);
                         dailyBonusButton.disabled = false;
                         dailyBonusButton.innerHTML = '<i class="fas fa-gift"></i> Получить бонус';
                         dailyBonusButton.style.background = 'linear-gradient(to right, var(--primary), var(--accent))';
-                    }, timeLeft);
-                }
+                        showNotification('Ежедневный бонус доступен!', 'success');
+                    } else {
+                        const hours = Math.floor(timeLeft / 3600000);
+                        const minutes = Math.floor((timeLeft % 3600000) / 60000);
+                        dailyBonusButton.innerHTML = `<i class="fas fa-clock"></i> ${hours}ч ${minutes}м`;
+                        dailyBonusButton.style.background = 'var(--gray)';
+                    }
+                }, 1000);
             }
+            
+            // Проверяем бонус после авторизации
+            setTimeout(checkDailyBonus, 2000);
             
             // Активация промокода
             applyPromoButton.addEventListener('click', () => {
@@ -3222,98 +4060,348 @@
                     return;
                 }
                 
-                // Имитация проверки промокода
-                const promoList = {
-                    'WELCOME': 500,
-                    'MINES': 1000,
-                    'BONUS2024': 1500,
-                    'FRONZGG': 5000
+                // Отправляем на сервер
+                sendToServer({
+                    type: 'use_promo',
+                    telegram_id: currentUser.telegramId,
+                    code: promoCode
+                });
+                
+                promoCodeInput.value = '';
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // ОНЛАЙН РАКЕТА (Lucky Jet)
+        // ═══════════════════════════════════════════════════════════════
+        
+        function handleRocketNewRound(data) {
+            currentRocketGameId = data.gameId;
+            rocketBetPlaced = false;
+            document.getElementById('rocket-status').textContent = 'Прием ставок';
+            document.getElementById('crash-multiplier').textContent = '1.00x';
+            document.getElementById('start-crash').disabled = false;
+            document.getElementById('cash-out-crash').disabled = true;
+            
+            let timeLeft = data.bettingTime / 1000;
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('rocket-timer').textContent = `${timeLeft}с`;
+                if (timeLeft <= 0) clearInterval(timerInterval);
+            }, 1000);
+        }
+        
+        function handleRocketStarted(data) {
+            document.getElementById('rocket-status').textContent = 'Полет!';
+            document.getElementById('start-crash').disabled = true;
+            if (rocketBetPlaced) {
+                document.getElementById('cash-out-crash').disabled = false;
+            }
+        }
+        
+        function handleRocketMultiplierUpdate(data) {
+            document.getElementById('crash-multiplier').textContent = data.multiplier.toFixed(2) + 'x';
+            const rocket = document.getElementById('rocket-icon');
+            const progress = Math.min((data.multiplier - 1) * 20, 100);
+            rocket.style.transform = `translate(${progress}%, -${progress}%)`;
+        }
+        
+        function handleRocketCrashed(data) {
+            document.getElementById('rocket-status').textContent = 'Взрыв!';
+            document.getElementById('crash-multiplier').textContent = data.crashPoint.toFixed(2) + 'x';
+            document.getElementById('cash-out-crash').disabled = true;
+            document.getElementById('rocket-icon').innerHTML = '<i class="fas fa-bomb"></i>';
+            setTimeout(() => {
+                document.getElementById('rocket-icon').innerHTML = '<i class="fas fa-rocket"></i>';
+                document.getElementById('rocket-icon').style.transform = 'translate(0, 0)';
+            }, 3000);
+        }
+        
+        async function placeRocketBet() {
+            const betAmount = parseInt(document.getElementById('crash-bet-amount').value);
+            if (!betAmount || betAmount < 10) {
+                showNotification('Минимальная ставка 10 FCOINS', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/rocket/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: currentUser.telegramId, bet_amount: betAmount })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    rocketBetPlaced = true;
+                    balance = result.newBalance;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Ставка ${betAmount} FCOINS принята!`, 'success');
+                    document.getElementById('start-crash').disabled = true;
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (err) {
+                showNotification('Ошибка ставки', 'error');
+            }
+        }
+        
+        async function cashoutRocket() {
+            try {
+                const response = await fetch('/api/rocket/cashout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegram_id: currentUser.telegramId })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    balance += result.winAmount;
+                    balanceElement.textContent = balance.toLocaleString();
+                    document.getElementById('rocket-cashout-btn').disabled = true;
+                    rocketBetPlaced = false;
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (err) {
+                showNotification('Ошибка вывода', 'error');
+            }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // ОНЛАЙН РУЛЕТКА
+        // ═══════════════════════════════════════════════════════════════
+        
+        function handleRouletteNewRound(data) {
+            currentRouletteGameId = data.gameId;
+            rouletteBetPlaced = false;
+            document.getElementById('roulette-status').textContent = 'Прием ставок';
+            document.getElementById('roulette-bet-btn').disabled = false;
+            
+            let timeLeft = data.bettingTime / 1000;
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('roulette-timer').textContent = `${timeLeft}с`;
+                if (timeLeft <= 0) clearInterval(timerInterval);
+            }, 1000);
+        }
+        
+        function handleRouletteStarted(data) {
+            document.getElementById('roulette-status').textContent = 'Вращение...';
+            document.getElementById('spin-roulette').disabled = true;
+            const wheel = document.getElementById('roulette-wheel');
+            wheel.style.animation = 'wheelSpin 10s cubic-bezier(0.2, 0.8, 0.3, 1) forwards';
+        }
+        
+        function handleRouletteResult(data) {
+            document.getElementById('roulette-status').textContent = `Выпало: ${data.resultNumber}`;
+            setTimeout(() => {
+                const wheel = document.getElementById('roulette-wheel');
+                wheel.style.animation = 'none';
+            }, 10000);
+        }
+        
+        async function placeRouletteBet() {
+            const betAmount = parseInt(document.getElementById('roulette-bet-amount').value);
+            const betType = document.querySelector('.bet-option.selected')?.dataset.bet || 'red';
+            
+            if (!betAmount || betAmount < 10) {
+                showNotification('Минимальная ставка 10 FCOINS', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/roulette/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        telegram_id: currentUser.telegramId, 
+                        bet_type: betType,
+                        bet_value: betType,
+                        bet_amount: betAmount 
+                    })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    rouletteBetPlaced = true;
+                    balance = result.newBalance;
+                    balanceElement.textContent = balance.toLocaleString();
+                    showNotification(`Ставка ${betAmount} FCOINS на ${betType} принята!`, 'success');
+                    document.getElementById('spin-roulette').disabled = true;
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (err) {
+                showNotification('Ошибка ставки', 'error');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // ТРАНЗАКЦИИ
+        // ═══════════════════════════════════════════════════════════════
+        
+        let allTransactions = [];
+        let currentFilter = 'all';
+        
+        async function loadTransactions() {
+            const listElement = document.getElementById('transactions-list');
+            
+            if (!currentUser || !currentUser.telegramId) {
+                listElement.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 20px;">Авторизуйтесь для просмотра транзакций</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/transactions/${currentUser.telegramId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки');
+                }
+                
+                allTransactions = await response.json();
+                renderTransactions();
+            } catch (err) {
+                console.error('Ошибка загрузки транзакций:', err);
+                listElement.innerHTML = '<p style="text-align: center; color: var(--danger); padding: 20px;">Ошибка загрузки транзакций</p>';
+            }
+        }
+        
+        function renderTransactions() {
+            const listElement = document.getElementById('transactions-list');
+            
+            let filtered = allTransactions;
+            if (currentFilter !== 'all') {
+                filtered = allTransactions.filter(t => t.type === currentFilter);
+            }
+            
+            if (filtered.length === 0) {
+                const message = currentFilter === 'all' ? 'История транзакций пуста' : 
+                               currentFilter === 'deposit' ? 'Нет пополнений' : 'Нет выводов';
+                listElement.innerHTML = `<p style="text-align: center; color: var(--gray); padding: 20px;">${message}</p>`;
+                return;
+            }
+            
+            listElement.innerHTML = filtered.map(t => {
+                const isDeposit = t.type === 'deposit';
+                const icon = isDeposit ? 'fa-arrow-down' : 'fa-arrow-up';
+                const color = isDeposit ? 'var(--success)' : 'var(--danger)';
+                const sign = isDeposit ? '+' : '-';
+                const date = new Date(t.created_at).toLocaleString('ru-RU');
+                
+                // Статусы транзакций
+                const statusMap = {
+                    'pending': { text: 'Ожидание', color: 'var(--warning)', icon: 'fa-clock' },
+                    'processing': { text: 'Обработка', color: 'var(--primary)', icon: 'fa-spinner' },
+                    'completed': { text: 'Успешно', color: 'var(--success)', icon: 'fa-check-circle' },
+                    'rejected': { text: 'Отклонено', color: 'var(--danger)', icon: 'fa-times-circle' }
                 };
                 
-                if (promoCode in promoList) {
-                    const amount = promoList[promoCode];
-                    balance += amount;
-                    updateBalance();
-                    showNotification(`Промокод активирован! Получено ${amount} FCOINS`, 'success');
-                    promoCodeInput.value = '';
+                const status = statusMap[t.status] || statusMap['completed'];
+                
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--secondary); border-radius: 10px;">
+                        <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: ${color}; display: flex; align-items: center; justify-content: center; color: white;">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-weight: 600; color: var(--dark);">${isDeposit ? 'Пополнение' : 'Вывод'}</span>
+                                    <span style="font-size: 11px; color: var(--gray); background: var(--light); padding: 2px 6px; border-radius: 4px;">ID: ${t.id}</span>
+                                </div>
+                                <div style="font-size: 12px; color: var(--gray);">${date}</div>
+                                <div style="display: flex; align-items: center; gap: 5px; margin-top: 5px;">
+                                    <i class="fas ${status.icon}" style="font-size: 10px; color: ${status.color};"></i>
+                                    <span style="font-size: 11px; color: ${status.color}; font-weight: 600;">${status.text}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="font-size: 18px; font-weight: 700; color: ${color}; white-space: nowrap; margin-left: 10px;">
+                            ${sign}${t.amount.toLocaleString()} FCOINS
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Модальные окна транзакций
+        function openDepositModal() {
+            document.getElementById('deposit-modal').style.display = 'flex';
+            document.getElementById('deposit-amount').value = '';
+        }
+        
+        function closeDepositModal() {
+            document.getElementById('deposit-modal').style.display = 'none';
+        }
+        
+        function openWithdrawModal() {
+            document.getElementById('withdraw-modal').style.display = 'flex';
+            document.getElementById('withdraw-amount').value = '';
+            document.getElementById('withdraw-balance').textContent = balance.toLocaleString();
+        }
+        
+        function closeWithdrawModal() {
+            document.getElementById('withdraw-modal').style.display = 'none';
+        }
+        
+        function confirmDeposit() {
+            const amount = parseInt(document.getElementById('deposit-amount').value);
+            
+            if (!amount || amount <= 0) {
+                showNotification('Введите корректную сумму', 'error');
+                return;
+            }
+            
+            // Открываем Telegram бота с сообщением
+            const botUsername = 'YOUR_BOT_USERNAME'; // Замените на имя вашего бота
+            const message = `Привет! Хочу пополнить свой аккаунт (ID: ${currentUser.telegramId}) на сумму: ${amount} FCOINS`;
+            const telegramUrl = `https://t.me/${botUsername}?text=${encodeURIComponent(message)}`;
+            
+            window.open(telegramUrl, '_blank');
+            closeDepositModal();
+            showNotification('Перейдите в бота для завершения пополнения', 'success');
+        }
+        
+        async function confirmWithdraw() {
+            const amount = parseInt(document.getElementById('withdraw-amount').value);
+            
+            if (!amount || amount <= 0) {
+                showNotification('Введите корректную сумму', 'error');
+                return;
+            }
+            
+            if (amount > balance) {
+                showNotification('Недостаточно средств', 'error');
+                return;
+            }
+            
+            try {
+                // Отправляем заявку на вывод
+                const response = await fetch('/api/withdraw-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        telegram_id: currentUser.telegramId,
+                        amount: amount
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    balance = result.newBalance;
+                    balanceElement.textContent = balance.toLocaleString();
+                    closeWithdrawModal();
+                    showNotification('Заявка на вывод отправлена!', 'success');
+                    loadTransactions(); // Обновляем историю
                 } else {
-                    showNotification('Неверный промокод', 'error');
+                    showNotification(result.error || 'Ошибка вывода', 'error');
                 }
-            });
-            
-            // Загружаем транзакции
-            loadTransactions();
-            
-            // Обновляем онлайн счетчик каждые 30 секунд (имитация)
-            setInterval(() => {
-                const onlineCount = Math.floor(Math.random() * 1000) + 5000;
-                document.getElementById('online-count').textContent = onlineCount.toLocaleString();
-            }, 30000);
-        }
-
-        // Загрузка транзакций
-        function loadTransactions() {
-            const saved = localStorage.getItem('frnmines_transactions');
-            if (saved) {
-                transactions = JSON.parse(saved);
+            } catch (err) {
+                console.error('Ошибка вывода:', err);
+                showNotification('Ошибка отправки заявки', 'error');
             }
-            
-            // Отображаем пополнения
-            depositsList.innerHTML = '';
-            if (transactions.deposits.length === 0) {
-                depositsList.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">Нет пополнений</p>';
-            } else {
-                transactions.deposits.forEach(deposit => {
-                    const item = document.createElement('div');
-                    item.className = 'transaction-item';
-                    item.innerHTML = `
-                        <div>
-                            <strong>Пополнение</strong>
-                            <div class="transaction-date">${deposit.date}</div>
-                            <div style="font-size: 12px; color: var(--gray);">Метод: ${getMethodName(deposit.method)}</div>
-                        </div>
-                        <div class="transaction-amount deposit">+${deposit.amount.toLocaleString()} FCOINS</div>
-                    `;
-                    depositsList.appendChild(item);
-                });
-            }
-            
-            // Отображаем выводы
-            withdrawalsList.innerHTML = '';
-            if (transactions.withdrawals.length === 0) {
-                withdrawalsList.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">Нет выводов</p>';
-            } else {
-                transactions.withdrawals.forEach(withdrawal => {
-                    const item = document.createElement('div');
-                    item.className = 'transaction-item';
-                    item.innerHTML = `
-                        <div>
-                            <strong>Вывод</strong>
-                            <div class="transaction-date">${withdrawal.date}</div>
-                            <div style="font-size: 12px; color: var(--gray);">Метод: ${getMethodName(withdrawal.method)}</div>
-                            <div style="font-size: 12px; color: var(--gray);">Статус: ${withdrawal.status}</div>
-                        </div>
-                        <div class="transaction-amount withdrawal">-${withdrawal.amount.toLocaleString()} FCOINS</div>
-                    `;
-                    withdrawalsList.appendChild(item);
-                });
-            }
-        }
-
-        // Сохранение транзакций
-        function saveTransactions() {
-            localStorage.setItem('frnmines_transactions', JSON.stringify(transactions));
-        }
-
-        // Получение названия метода оплаты
-        function getMethodName(method) {
-            const methods = {
-                'card': 'Банковская карта',
-                'qiwi': 'QIWI',
-                'yoomoney': 'ЮMoney',
-                'crypto': 'Криптовалюта'
-            };
-            return methods[method] || method;
         }
 
         // Запуск инициализации при загрузке страницы
